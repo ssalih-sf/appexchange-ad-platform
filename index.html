@@ -856,6 +856,12 @@
   .alert-success { background: var(--sf-green-light); color: var(--sf-green); }
   .alert-warning { background: var(--sf-orange-light); color: var(--sf-orange); }
 
+  /* Toast animation */
+  @keyframes slideIn {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
   /* Hero carousel scrollbar hide */
   #hero-carousel::-webkit-scrollbar { display: none; }
   #hero-carousel { -ms-overflow-style: none; scrollbar-width: none; }
@@ -1064,9 +1070,9 @@
           <div class="card-subtitle">Daily installs attributed to paid campaigns</div>
         </div>
         <div class="tabs" style="border:none;margin:0">
-          <div class="tab active">30D</div>
-          <div class="tab">90D</div>
-          <div class="tab">YTD</div>
+          <div class="tab active" onclick="setChartPeriod(this)">30D</div>
+          <div class="tab" onclick="setChartPeriod(this)">90D</div>
+          <div class="tab" onclick="setChartPeriod(this)">YTD</div>
         </div>
       </div>
       <div class="chart-area">
@@ -1158,17 +1164,17 @@
       <button class="btn btn-primary" onclick="showScreen('create')">+ New Campaign</button>
     </div>
 
-    <div class="tabs">
-      <div class="tab active">All (5)</div>
-      <div class="tab">Active (2)</div>
-      <div class="tab">Paused (1)</div>
-      <div class="tab">Ended (1)</div>
-      <div class="tab">Draft (1)</div>
+    <div class="tabs" id="campaigns-tabs">
+      <div class="tab active" onclick="filterCampaigns('all')">All (5)</div>
+      <div class="tab" onclick="filterCampaigns('active')">Active (2)</div>
+      <div class="tab" onclick="filterCampaigns('paused')">Paused (1)</div>
+      <div class="tab" onclick="filterCampaigns('ended')">Ended (1)</div>
+      <div class="tab" onclick="filterCampaigns('draft')">Draft (1)</div>
     </div>
 
     <div class="card" style="padding:0">
       <div class="table-container">
-        <table>
+        <table id="campaigns-table">
           <thead>
             <tr>
               <th>Campaign Name</th>
@@ -1199,7 +1205,7 @@
               <td>178</td>
               <td>$16.85</td>
               <td>$3,000 / $5,000</td>
-              <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="pauseCampaign(this,'Q2 Sales Cloud')">Pause</button></td>
             </tr>
             <tr>
               <td>
@@ -1215,7 +1221,7 @@
               <td>98</td>
               <td>$20.41</td>
               <td>$2,000 / $3,000</td>
-              <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="pauseCampaign(this,'Financial Services ICP')">Pause</button></td>
             </tr>
             <tr>
               <td>
@@ -1231,7 +1237,7 @@
               <td>36</td>
               <td>$19.44</td>
               <td>$700 / $2,000</td>
-              <td><button class="btn btn-secondary btn-sm">Resume</button></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="pauseCampaign(this,'Agentforce Early Adopters')">Resume</button></td>
             </tr>
             <tr>
               <td>
@@ -1247,7 +1253,7 @@
               <td>152</td>
               <td>$23.03</td>
               <td>$3,500 / $3,500</td>
-              <td><button class="btn btn-secondary btn-sm">Clone</button></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="cloneCampaign('Q1 Broad Awareness')">Clone</button></td>
             </tr>
             <tr>
               <td>
@@ -1316,55 +1322,57 @@
               </div>
               <div class="ai-text">
                 Partners with similar install patterns see best results targeting <strong>Sales Cloud Enterprise customers, 500-5,000 employees, Financial Services & Technology verticals</strong>.
-                <a href="#" style="color:var(--sf-purple);font-weight:600" onclick="return false">Apply suggestion</a>
+                <a href="#" style="color:var(--sf-purple);font-weight:600" onclick="applyIcpSuggestion();return false">Apply suggestion</a>
               </div>
             </div>
 
             <div class="form-label" style="margin-bottom:8px;font-size:13px;font-weight:700">Targeting Rules</div>
 
+            <div id="rules-container">
             <div class="segment-rule">
               <select><option>Salesforce Product</option></select>
               <select><option>includes</option><option>excludes</option></select>
               <select><option>Sales Cloud</option><option>Service Cloud</option><option>Marketing Cloud</option><option>Commerce Cloud</option><option>Data Cloud</option></select>
-              <button class="remove-rule">&times;</button>
+              <button class="remove-rule" onclick="removeRuleByElement(this)">&times;</button>
             </div>
             <div class="segment-connector"><span>AND</span></div>
             <div class="segment-rule">
               <select><option>Company Size</option></select>
               <select><option>between</option></select>
               <input type="text" value="500" style="width:80px"> &ndash; <input type="text" value="5,000" style="width:80px"> employees
-              <button class="remove-rule">&times;</button>
+              <button class="remove-rule" onclick="removeRuleByElement(this)">&times;</button>
             </div>
             <div class="segment-connector"><span>AND</span></div>
             <div class="segment-rule">
               <select><option>Industry</option></select>
               <select><option>is any of</option></select>
-              <select><option>Financial Services, Technology</option></select>
-              <button class="remove-rule">&times;</button>
+              <select><option>Financial Services, Technology</option><option>Healthcare</option><option>Manufacturing</option><option>Retail</option></select>
+              <button class="remove-rule" onclick="removeRuleByElement(this)">&times;</button>
             </div>
             <div class="segment-connector"><span>AND</span></div>
             <div class="segment-rule">
               <select><option>Agentforce Usage</option></select>
               <select><option>is</option></select>
               <select><option>Active</option><option>Inactive</option><option>Any</option></select>
-              <button class="remove-rule">&times;</button>
+              <button class="remove-rule" onclick="removeRuleByElement(this)">&times;</button>
             </div>
             <div class="segment-connector"><span>AND</span></div>
             <div class="segment-rule">
               <select><option>Competitor App Installed</option></select>
               <select><option>excludes</option></select>
-              <select><option>Acme CPQ (your app)</option></select>
-              <button class="remove-rule">&times;</button>
+              <select><option>Acme CPQ (your app)</option><option>DealHub CPQ</option><option>Conga CPQ</option></select>
+              <button class="remove-rule" onclick="removeRuleByElement(this)">&times;</button>
             </div>
             <div class="segment-connector"><span>AND</span></div>
             <div class="segment-rule">
               <select><option>Region</option></select>
               <select><option>is</option></select>
-              <select><option>North America</option><option>EMEA</option><option>APAC</option></select>
-              <button class="remove-rule">&times;</button>
+              <select><option>North America</option><option>EMEA</option><option>APAC</option><option>LATAM</option></select>
+              <button class="remove-rule" onclick="removeRuleByElement(this)">&times;</button>
+            </div>
             </div>
 
-            <button class="btn btn-secondary btn-sm" style="margin-top:8px">+ Add Rule</button>
+            <button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="addRule()">+ Add Rule</button>
           </div>
         </div>
         <div>
@@ -1429,7 +1437,7 @@
         <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;color:var(--sf-gray-4);margin-bottom:12px">External Channels (Top of Funnel)</div>
 
         <div class="grid-3" style="margin-bottom:24px">
-          <div class="channel-card selected" onclick="this.classList.toggle('selected')">
+          <div class="channel-card selected" onclick="toggleChannel(this)">
             <div class="channel-check">&#10003;</div>
             <div class="channel-icon">in</div>
             <div class="channel-name">LinkedIn</div>
@@ -1439,7 +1447,7 @@
               <div style="font-size:11px;color:var(--sf-gray-5)">Best for: Enterprise decision-makers</div>
             </div>
           </div>
-          <div class="channel-card selected" onclick="this.classList.toggle('selected')">
+          <div class="channel-card selected" onclick="toggleChannel(this)">
             <div class="channel-check">&#10003;</div>
             <div class="channel-icon">G</div>
             <div class="channel-name">Google</div>
@@ -1449,7 +1457,7 @@
               <div style="font-size:11px;color:var(--sf-gray-5)">Best for: High-intent search capture</div>
             </div>
           </div>
-          <div class="channel-card" onclick="this.classList.toggle('selected')">
+          <div class="channel-card" onclick="toggleChannel(this)">
             <div class="channel-check"></div>
             <div class="channel-icon">f</div>
             <div class="channel-name">Meta</div>
@@ -1464,7 +1472,7 @@
         <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;color:var(--sf-gray-4);margin-bottom:12px">In-Marketplace (Bottom of Funnel)</div>
 
         <div class="grid-3">
-          <div class="channel-card selected" onclick="this.classList.toggle('selected')">
+          <div class="channel-card selected" onclick="toggleChannel(this)">
             <div class="channel-check">&#10003;</div>
             <div class="channel-icon" style="color:var(--sf-blue)">&#9733;</div>
             <div class="channel-name">AgentExchange Sponsored</div>
@@ -1523,7 +1531,7 @@
               <div class="budget-amount">$5,000</div>
               <div class="budget-period">per month</div>
             </div>
-            <input type="range" min="500" max="25000" value="5000" step="500" oninput="document.querySelector('.budget-amount').textContent='$'+Number(this.value).toLocaleString()">
+            <input type="range" min="500" max="25000" value="5000" step="500" oninput="updateBudget(this.value)">
             <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sf-gray-4);margin-top:4px">
               <span>$500</span>
               <span>$25,000</span>
@@ -1536,23 +1544,23 @@
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-size:12px;width:140px">LinkedIn (40%)</span>
                 <div style="flex:1;height:8px;background:var(--sf-gray-2);border-radius:4px;overflow:hidden">
-                  <div style="width:40%;height:100%;background:#0A66C2;border-radius:4px"></div>
+                  <div class="alloc-bar-fill" style="width:40%;height:100%;background:#0A66C2;border-radius:4px;transition:width 0.3s"></div>
                 </div>
-                <span style="font-size:12px;font-weight:600">$2,000</span>
+                <span class="alloc-amount" style="font-size:12px;font-weight:600;min-width:55px;text-align:right">$2,000</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-size:12px;width:140px">Google (35%)</span>
                 <div style="flex:1;height:8px;background:var(--sf-gray-2);border-radius:4px;overflow:hidden">
-                  <div style="width:35%;height:100%;background:#4285F4;border-radius:4px"></div>
+                  <div class="alloc-bar-fill" style="width:35%;height:100%;background:#4285F4;border-radius:4px;transition:width 0.3s"></div>
                 </div>
-                <span style="font-size:12px;font-weight:600">$1,750</span>
+                <span class="alloc-amount" style="font-size:12px;font-weight:600;min-width:55px;text-align:right">$1,750</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px">
                 <span style="font-size:12px;width:140px">AgentExchange (25%)</span>
                 <div style="flex:1;height:8px;background:var(--sf-gray-2);border-radius:4px;overflow:hidden">
-                  <div style="width:25%;height:100%;background:var(--sf-blue);border-radius:4px"></div>
+                  <div class="alloc-bar-fill" style="width:25%;height:100%;background:var(--sf-blue);border-radius:4px;transition:width 0.3s"></div>
                 </div>
-                <span style="font-size:12px;font-weight:600">$1,250</span>
+                <span class="alloc-amount" style="font-size:12px;font-weight:600;min-width:55px;text-align:right">$1,250</span>
               </div>
             </div>
           </div>
@@ -1585,19 +1593,19 @@
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
               <div style="background:var(--sf-gray-1);border-radius:var(--sf-radius-sm);padding:12px;text-align:center">
-                <div style="font-size:20px;font-weight:700;color:var(--sf-navy)">110K-165K</div>
+                <div id="est-impressions" style="font-size:20px;font-weight:700;color:var(--sf-navy)">110,000-165,000</div>
                 <div style="font-size:11px;color:var(--sf-gray-5)">Est. Impressions / mo</div>
               </div>
               <div style="background:var(--sf-gray-1);border-radius:var(--sf-radius-sm);padding:12px;text-align:center">
-                <div style="font-size:20px;font-weight:700;color:var(--sf-navy)">1,500-2,200</div>
+                <div id="est-clicks" style="font-size:20px;font-weight:700;color:var(--sf-navy)">1,500-2,200</div>
                 <div style="font-size:11px;color:var(--sf-gray-5)">Est. Clicks / mo</div>
               </div>
               <div style="background:var(--sf-green-light);border-radius:var(--sf-radius-sm);padding:12px;text-align:center">
-                <div style="font-size:20px;font-weight:700;color:var(--sf-green)">90-140</div>
+                <div id="est-installs" style="font-size:20px;font-weight:700;color:var(--sf-green)">90-140</div>
                 <div style="font-size:11px;color:var(--sf-green)">Est. Installs / mo</div>
               </div>
               <div style="background:var(--sf-blue-light);border-radius:var(--sf-radius-sm);padding:12px;text-align:center">
-                <div style="font-size:20px;font-weight:700;color:var(--sf-blue)">$17-22</div>
+                <div id="est-cpi" style="font-size:20px;font-weight:700;color:var(--sf-blue)">$17-22</div>
                 <div style="font-size:11px;color:var(--sf-blue)">Est. Cost per Install</div>
               </div>
             </div>
@@ -1614,21 +1622,21 @@
                 <div class="toggle-label">Slack Alerts</div>
                 <div class="toggle-desc">Get campaign updates in #acme-marketing</div>
               </div>
-              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              <div class="toggle on" onclick="toggleSwitch(this)"></div>
             </div>
             <div class="toggle-row">
               <div>
                 <div class="toggle-label">Email Weekly Summary</div>
                 <div class="toggle-desc">Performance digest every Monday</div>
               </div>
-              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              <div class="toggle on" onclick="toggleSwitch(this)"></div>
             </div>
             <div class="toggle-row" style="border:none">
               <div>
                 <div class="toggle-label">Auto-pause on Budget</div>
                 <div class="toggle-desc">Pause campaign when budget is exhausted</div>
               </div>
-              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              <div class="toggle on" onclick="toggleSwitch(this)"></div>
             </div>
           </div>
         </div>
@@ -1746,8 +1754,8 @@
       <div style="display:flex;justify-content:space-between;margin-top:8px">
         <button class="btn btn-secondary" onclick="goToStep(3)">&larr; Back</button>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-secondary">Save as Draft</button>
-          <button class="btn btn-success btn-lg" onclick="alert('Campaign launched! You\'ll receive a Slack notification when your first impressions start delivering.')">Launch Campaign &#128640;</button>
+          <button class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+          <button class="btn btn-success btn-lg" onclick="launchCampaign()">Launch Campaign &#128640;</button>
         </div>
       </div>
     </div>
@@ -1788,7 +1796,7 @@
             <td><strong>27,340</strong></td>
             <td>2 hours ago</td>
             <td>2 campaigns</td>
-            <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="editSegment('Sales Cloud Mid-Market')">Edit</button></td>
           </tr>
           <tr>
             <td><strong>Enterprise - All Verticals</strong></td>
@@ -1798,7 +1806,7 @@
             <td><strong>14,280</strong></td>
             <td>2 hours ago</td>
             <td>1 campaign</td>
-            <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="editSegment('Enterprise - All Verticals')">Edit</button></td>
           </tr>
           <tr>
             <td><strong>Agentforce Early Adopters</strong></td>
@@ -1808,7 +1816,7 @@
             <td><strong>8,920</strong></td>
             <td>2 hours ago</td>
             <td>1 campaign</td>
-            <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="editSegment('Agentforce Early Adopters')">Edit</button></td>
           </tr>
           <tr>
             <td><strong>SMB Broad - No CPQ Installed</strong></td>
@@ -1818,7 +1826,7 @@
             <td><strong>42,100</strong></td>
             <td>2 hours ago</td>
             <td>0 campaigns</td>
-            <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="editSegment('SMB Broad')">Edit</button></td>
           </tr>
         </tbody>
       </table>
@@ -1831,7 +1839,7 @@
       </div>
       <div class="ai-text">
         Based on your top-converting installs, customers in the <strong>Healthcare & Life Sciences</strong> vertical with Service Cloud show a similar profile to your best Financial Services customers. Estimated segment size: <strong>5,400 orgs</strong>.
-        <a href="#" style="color:var(--sf-purple);font-weight:600" onclick="return false">Create lookalike segment &rarr;</a>
+        <a href="#" style="color:var(--sf-purple);font-weight:600" onclick="createLookalike();return false">Create lookalike segment &rarr;</a>
       </div>
     </div>
   </div>
@@ -1844,12 +1852,12 @@
         <div class="subtitle">Closed-loop measurement: ad spend &rarr; listing visits &rarr; installs &rarr; LMA license events</div>
       </div>
       <div style="display:flex;gap:8px">
-        <select class="form-select" style="width:auto;padding:6px 12px">
+        <select class="form-select" style="width:auto;padding:6px 12px" onchange="filterPerformance()">
           <option>All Campaigns</option>
           <option>Q2 Sales Cloud - Mid Market</option>
           <option>Financial Services ICP</option>
         </select>
-        <select class="form-select" style="width:auto;padding:6px 12px">
+        <select class="form-select" style="width:auto;padding:6px 12px" onchange="filterPerformance()">
           <option>Last 30 days</option>
           <option>Last 90 days</option>
           <option>Year to date</option>
@@ -2002,7 +2010,7 @@
       </div>
       <div class="ai-text">
         Your <strong>LinkedIn &rarr; Financial Services segment</strong> has the lowest CPI ($12.40). Shifting 15% of Google budget to this segment could yield ~20 additional installs/month at lower cost.
-        <a href="#" style="color:var(--sf-purple);font-weight:600" onclick="return false">Apply recommendation &rarr;</a>
+        <a href="#" style="color:var(--sf-purple);font-weight:600" onclick="applyOptimization();return false">Apply recommendation &rarr;</a>
       </div>
     </div>
   </div>
@@ -2545,6 +2553,7 @@
 </div>
 
 <script>
+  // ========== NAVIGATION ==========
   function showScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-' + name).classList.add('active');
@@ -2552,44 +2561,47 @@
     const map = {dashboard:0, campaigns:1, create:2, audiences:3, performance:4, marketplace:5};
     const items = document.querySelectorAll('.sidebar .nav-item');
     if (items[map[name]]) items[map[name]].classList.add('active');
+    window.scrollTo(0, 0);
   }
 
+  // ========== CAMPAIGN WIZARD STEPPER ==========
   function goToStep(num) {
     document.querySelectorAll('.step-content').forEach(s => s.style.display = 'none');
     document.getElementById('step-' + num).style.display = 'block';
-
     for (let i = 1; i <= 4; i++) {
       const ind = document.getElementById('step-' + i + '-indicator');
       ind.className = 'step';
       if (i < num) ind.className = 'step completed';
       if (i === num) ind.className = 'step active';
-
       const numEl = ind.querySelector('.step-number');
       if (i < num) numEl.innerHTML = '&#10003;';
       else numEl.textContent = i;
     }
-
     document.querySelectorAll('.step-line').forEach((line, idx) => {
       line.className = 'step-line' + (idx < num - 1 ? ' completed' : '');
     });
   }
-
   goToStep(2);
 
+  // ========== HERO CAROUSEL ==========
   function scrollHeroTo(index) {
     var carousel = document.getElementById('hero-carousel');
+    if (!carousel) return;
     var cardWidth = carousel.scrollWidth / 4;
     carousel.scrollTo({ left: cardWidth * index, behavior: 'smooth' });
   }
   function updateHeroDots() {
     var carousel = document.getElementById('hero-carousel');
+    if (!carousel) return;
     var cardWidth = carousel.scrollWidth / 4;
     var active = Math.round(carousel.scrollLeft / cardWidth);
     for (var i = 0; i < 4; i++) {
-      document.getElementById('hero-dot-' + i).style.background = i === active ? 'var(--sf-blue)' : 'var(--sf-gray-3)';
+      var dot = document.getElementById('hero-dot-' + i);
+      if (dot) dot.style.background = i === active ? 'var(--sf-blue)' : 'var(--sf-gray-3)';
     }
   }
 
+  // ========== MARKETPLACE TABS ==========
   function showMarketplaceTab(tab) {
     document.getElementById('mp-tab-browse').style.display = tab === 'browse' ? 'block' : 'none';
     document.getElementById('mp-tab-search').style.display = tab === 'search' ? 'block' : 'none';
@@ -2597,6 +2609,241 @@
     tabs[0].className = 'tab' + (tab === 'browse' ? ' active' : '');
     tabs[1].className = 'tab' + (tab === 'search' ? ' active' : '');
   }
+
+  // ========== CAMPAIGNS LIST: Tab Filtering ==========
+  function filterCampaigns(status) {
+    var rows = document.querySelectorAll('#campaigns-table tbody tr');
+    rows.forEach(function(row) {
+      if (status === 'all') { row.style.display = ''; return; }
+      var badge = row.querySelector('.status-badge');
+      if (!badge) { row.style.display = 'none'; return; }
+      var text = badge.textContent.trim().toLowerCase();
+      row.style.display = text === status ? '' : 'none';
+    });
+    var tabs = document.querySelectorAll('#campaigns-tabs .tab');
+    tabs.forEach(function(t) { t.classList.remove('active'); });
+    event.target.classList.add('active');
+  }
+
+  // ========== SEGMENT RULE BUILDER ==========
+  var ruleId = 0;
+  function addRule() {
+    ruleId++;
+    var container = document.getElementById('rules-container');
+    var connector = document.createElement('div');
+    connector.className = 'segment-connector';
+    connector.innerHTML = '<span>AND</span>';
+    connector.id = 'connector-' + ruleId;
+    var rule = document.createElement('div');
+    rule.className = 'segment-rule';
+    rule.id = 'rule-' + ruleId;
+    rule.innerHTML = '<select><option>Salesforce Product</option><option>Company Size</option><option>Industry</option><option>Agentforce Usage</option><option>Competitor App Installed</option><option>Region</option><option>Contract Tier</option><option>Org Edition</option></select>' +
+      '<select><option>includes</option><option>excludes</option><option>is</option><option>is not</option></select>' +
+      '<select><option>Sales Cloud</option><option>Service Cloud</option><option>Marketing Cloud</option><option>Commerce Cloud</option><option>Data Cloud</option><option>Financial Services</option><option>Technology</option><option>Healthcare</option><option>North America</option><option>EMEA</option><option>APAC</option><option>Active</option><option>Enterprise</option><option>Professional</option></select>' +
+      '<button class="remove-rule" onclick="removeRule(' + ruleId + ')">&times;</button>';
+    container.appendChild(connector);
+    container.appendChild(rule);
+    updateAudienceEstimate();
+  }
+
+  function removeRule(id) {
+    var rule = document.getElementById('rule-' + id);
+    var connector = document.getElementById('connector-' + id);
+    if (rule) rule.remove();
+    if (connector) connector.remove();
+    updateAudienceEstimate();
+  }
+
+  function removeRuleByElement(btn) {
+    var rule = btn.closest('.segment-rule');
+    var prev = rule.previousElementSibling;
+    if (prev && prev.classList.contains('segment-connector')) prev.remove();
+    else {
+      var next = rule.nextElementSibling;
+      if (next && next.classList.contains('segment-connector')) next.remove();
+    }
+    rule.remove();
+    updateAudienceEstimate();
+  }
+
+  function updateAudienceEstimate() {
+    var rules = document.querySelectorAll('#rules-container .segment-rule');
+    var counts = [150000, 68420, 41200, 32100, 28740, 27340, 24100, 21800, 19200, 16500];
+    var count = counts[Math.min(rules.length, counts.length - 1)];
+    var el = document.querySelector('.estimate-number');
+    if (el) el.textContent = count.toLocaleString();
+    var fill = document.querySelector('.estimate-fill');
+    if (fill) fill.style.width = Math.max(2, (count / 150000) * 100) + '%';
+  }
+
+  // ========== CHANNEL SELECTION ==========
+  function toggleChannel(el) {
+    el.classList.toggle('selected');
+    var check = el.querySelector('.channel-check');
+    if (check) check.innerHTML = el.classList.contains('selected') ? '&#10003;' : '';
+  }
+
+  // ========== BUDGET SLIDER ==========
+  function updateBudget(val) {
+    var amount = Number(val);
+    document.querySelector('.budget-amount').textContent = '$' + amount.toLocaleString();
+    // Update channel allocation
+    var allocs = document.querySelectorAll('.alloc-amount');
+    var bars = document.querySelectorAll('.alloc-bar-fill');
+    var percents = [0.40, 0.35, 0.25];
+    allocs.forEach(function(el, i) {
+      el.textContent = '$' + Math.round(amount * percents[i]).toLocaleString();
+    });
+    bars.forEach(function(el, i) {
+      el.style.width = (percents[i] * 100) + '%';
+    });
+    // Update estimates
+    var estImpressions = document.getElementById('est-impressions');
+    var estClicks = document.getElementById('est-clicks');
+    var estInstalls = document.getElementById('est-installs');
+    var estCpi = document.getElementById('est-cpi');
+    if (estImpressions) estImpressions.textContent = Math.round(amount * 22).toLocaleString() + '-' + Math.round(amount * 33).toLocaleString();
+    if (estClicks) estClicks.textContent = Math.round(amount * 0.3).toLocaleString() + '-' + Math.round(amount * 0.44).toLocaleString();
+    if (estInstalls) estInstalls.textContent = Math.round(amount * 0.018).toLocaleString() + '-' + Math.round(amount * 0.028).toLocaleString();
+    if (estCpi) estCpi.textContent = '$17-22';
+  }
+
+  // ========== TOGGLE SWITCHES ==========
+  function toggleSwitch(el) {
+    el.classList.toggle('on');
+  }
+
+  // ========== CAMPAIGN TABLE BUTTONS ==========
+  function editCampaign(name) {
+    showScreen('create');
+    goToStep(1);
+    showToast('Editing campaign: ' + name);
+  }
+
+  function pauseCampaign(btn, name) {
+    var row = btn.closest('tr');
+    var badge = row.querySelector('.status-badge');
+    if (badge.textContent.trim() === 'Active') {
+      badge.className = 'status-badge status-paused';
+      badge.textContent = 'Paused';
+      btn.textContent = 'Resume';
+      showToast('Campaign "' + name + '" paused');
+    } else {
+      badge.className = 'status-badge status-active';
+      badge.textContent = 'Active';
+      btn.textContent = 'Pause';
+      showToast('Campaign "' + name + '" resumed');
+    }
+  }
+
+  function cloneCampaign(name) {
+    showScreen('create');
+    goToStep(1);
+    showToast('Cloned campaign: ' + name + '. Edit your new campaign below.');
+  }
+
+  // ========== LAUNCH CAMPAIGN ==========
+  function launchCampaign() {
+    showToast('Campaign launched! You\'ll receive a Slack notification when impressions start delivering.', 'success');
+    setTimeout(function() { showScreen('campaigns'); }, 2000);
+  }
+
+  function saveDraft() {
+    showToast('Campaign saved as draft.', 'info');
+    setTimeout(function() { showScreen('campaigns'); }, 1500);
+  }
+
+  // ========== PERFORMANCE FILTERS ==========
+  function filterPerformance() {
+    showToast('Dashboard updated with new filters.', 'info');
+  }
+
+  // ========== CHART PERIOD TABS ==========
+  function setChartPeriod(el) {
+    var tabs = el.parentElement.querySelectorAll('.tab');
+    tabs.forEach(function(t) { t.classList.remove('active'); });
+    el.classList.add('active');
+    showToast('Chart updated to ' + el.textContent + ' view.', 'info');
+  }
+
+  // ========== AUDIENCE TABLE ACTIONS ==========
+  function editSegment(name) {
+    showScreen('create');
+    goToStep(1);
+    showToast('Editing segment: ' + name);
+  }
+
+  function createLookalike() {
+    showScreen('create');
+    goToStep(1);
+    showToast('Creating lookalike segment based on your top converters.');
+  }
+
+  // ========== AI SUGGESTION APPLY ==========
+  function applyIcpSuggestion() {
+    showToast('Einstein suggestion applied! Segment rules updated.', 'success');
+    var el = document.querySelector('.estimate-number');
+    if (el) el.textContent = '27,340';
+  }
+
+  function applyOptimization() {
+    showToast('Budget reallocation applied. 15% shifted from Google to LinkedIn FinServ segment.', 'success');
+  }
+
+  // ========== TOAST NOTIFICATIONS ==========
+  function showToast(message, type) {
+    type = type || 'info';
+    var colors = { info: 'var(--sf-blue)', success: 'var(--sf-green)', warning: 'var(--sf-orange)' };
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--sf-navy);color:white;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:9999;max-width:400px;display:flex;align-items:center;gap:10px;animation:slideIn 0.3s ease;border-left:4px solid ' + colors[type];
+    toast.innerHTML = '<span>' + message + '</span>';
+    document.body.appendChild(toast);
+    setTimeout(function() {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s';
+      setTimeout(function() { toast.remove(); }, 300);
+    }, 3500);
+  }
+
+  // ========== WHY THIS AD TOOLTIP ==========
+  function showWhyAd(el) {
+    var reason = el.getAttribute('data-reason');
+    if (!reason) return;
+    alert(reason);
+  }
+
+  // ========== INIT: Wire up existing elements ==========
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // Wire up remove-rule buttons on initial rules
+    document.querySelectorAll('.remove-rule').forEach(function(btn) {
+      if (!btn.onclick) {
+        btn.addEventListener('click', function() { removeRuleByElement(this); });
+      }
+    });
+
+    // Wire up "Add Rule" button
+    var addBtn = document.querySelector('[data-action="add-rule"]');
+    if (addBtn) addBtn.addEventListener('click', addRule);
+
+    // Wire up channel cards
+    document.querySelectorAll('.channel-card[data-selectable]').forEach(function(card) {
+      card.addEventListener('click', function() { toggleChannel(this); });
+    });
+
+    // Wire up toggle switches
+    document.querySelectorAll('.toggle').forEach(function(t) {
+      t.addEventListener('click', function() { toggleSwitch(this); });
+    });
+
+    // Wire up "Why am I seeing this?" links
+    document.querySelectorAll('[data-why-ad]').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        e.preventDefault();
+        showToast(this.getAttribute('data-why-ad'), 'info');
+      });
+    });
+  });
 </script>
 
 </body>

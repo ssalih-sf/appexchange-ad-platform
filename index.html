@@ -1,0 +1,2603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AppExchange Partner Advertising Platform</title>
+<style>
+  :root {
+    --sf-blue: #0176D3;
+    --sf-blue-dark: #014486;
+    --sf-blue-light: #EBF5FE;
+    --sf-navy: #032D60;
+    --sf-green: #2E844A;
+    --sf-green-light: #EBF7E6;
+    --sf-orange: #DD7A01;
+    --sf-orange-light: #FEF1E1;
+    --sf-red: #BA0517;
+    --sf-red-light: #FEF1EE;
+    --sf-purple: #7526C4;
+    --sf-gray-1: #F3F3F3;
+    --sf-gray-2: #E5E5E5;
+    --sf-gray-3: #C9C9C9;
+    --sf-gray-4: #939393;
+    --sf-gray-5: #706E6B;
+    --sf-text: #181818;
+    --sf-text-secondary: #444444;
+    --sf-white: #FFFFFF;
+    --sf-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    --sf-shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+    --sf-radius: 8px;
+    --sf-radius-sm: 4px;
+    --sf-font: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--sf-font);
+    background: var(--sf-gray-1);
+    color: var(--sf-text);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Global Nav */
+  .global-nav {
+    background: var(--sf-navy);
+    color: white;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  .global-nav .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .global-nav .logo svg { width: 28px; height: 20px; fill: white; }
+  .global-nav .logo-divider {
+    width: 1px; height: 24px; background: rgba(255,255,255,0.3); margin: 0 12px;
+  }
+  .global-nav .product-name {
+    font-size: 14px; font-weight: 500; opacity: 0.9;
+  }
+  .global-nav .nav-right {
+    margin-left: auto; display: flex; align-items: center; gap: 16px;
+  }
+  .global-nav .nav-right .avatar {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--sf-blue);
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    bottom: 0;
+    width: 220px;
+    background: var(--sf-white);
+    border-right: 1px solid var(--sf-gray-2);
+    padding: 16px 0;
+    z-index: 100;
+    overflow-y: auto;
+  }
+  .sidebar .nav-section {
+    padding: 0 16px;
+    margin-bottom: 24px;
+  }
+  .sidebar .nav-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--sf-gray-4);
+    margin-bottom: 8px;
+    padding: 0 8px;
+  }
+  .sidebar .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: var(--sf-radius-sm);
+    cursor: pointer;
+    color: var(--sf-text-secondary);
+    font-size: 13px;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+  .sidebar .nav-item:hover { background: var(--sf-gray-1); color: var(--sf-text); }
+  .sidebar .nav-item.active {
+    background: var(--sf-blue-light); color: var(--sf-blue); font-weight: 600;
+  }
+  .sidebar .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .sidebar .nav-item .badge {
+    margin-left: auto;
+    background: var(--sf-blue);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  /* Main Content */
+  .main {
+    margin-left: 220px;
+    margin-top: 48px;
+    padding: 24px;
+    min-height: calc(100vh - 48px);
+  }
+
+  /* Screen container */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* Page Header */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--sf-navy);
+  }
+  .page-header .subtitle {
+    font-size: 13px;
+    color: var(--sf-gray-5);
+    margin-top: 2px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--sf-white);
+    border-radius: var(--sf-radius);
+    box-shadow: var(--sf-shadow);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--sf-navy);
+  }
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--sf-gray-5);
+    margin-top: 2px;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--sf-radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--sf-blue);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--sf-blue-dark); }
+  .btn-secondary {
+    background: var(--sf-white);
+    color: var(--sf-blue);
+    border: 1px solid var(--sf-blue);
+  }
+  .btn-secondary:hover { background: var(--sf-blue-light); }
+  .btn-success {
+    background: var(--sf-green);
+    color: white;
+  }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn-lg { padding: 10px 24px; font-size: 14px; }
+
+  /* Stat Cards */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--sf-white);
+    border-radius: var(--sf-radius);
+    box-shadow: var(--sf-shadow);
+    padding: 20px;
+  }
+  .stat-card .stat-label {
+    font-size: 12px;
+    color: var(--sf-gray-5);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 8px;
+  }
+  .stat-card .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--sf-navy);
+  }
+  .stat-card .stat-change {
+    font-size: 12px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .stat-card .stat-change.up { color: var(--sf-green); }
+  .stat-card .stat-change.down { color: var(--sf-red); }
+
+  /* Tables */
+  .table-container {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--sf-gray-5);
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--sf-gray-2);
+  }
+  td {
+    padding: 12px;
+    border-bottom: 1px solid var(--sf-gray-1);
+    font-size: 13px;
+  }
+  tr:hover { background: var(--sf-gray-1); }
+
+  /* Status badges */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .status-active { background: var(--sf-green-light); color: var(--sf-green); }
+  .status-draft { background: var(--sf-gray-1); color: var(--sf-gray-5); }
+  .status-paused { background: var(--sf-orange-light); color: var(--sf-orange); }
+  .status-ended { background: var(--sf-red-light); color: var(--sf-red); }
+
+  /* Form elements */
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sf-text-secondary);
+    margin-bottom: 4px;
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--sf-gray-3);
+    border-radius: var(--sf-radius-sm);
+    font-size: 13px;
+    font-family: var(--sf-font);
+    transition: border-color 0.15s;
+    background: white;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--sf-blue);
+    box-shadow: 0 0 0 3px rgba(1,118,211,0.15);
+  }
+  .form-textarea { min-height: 80px; resize: vertical; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid var(--sf-gray-2);
+    margin-bottom: 20px;
+  }
+  .tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sf-gray-5);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--sf-text); }
+  .tab.active {
+    color: var(--sf-blue);
+    border-bottom-color: var(--sf-blue);
+  }
+
+  /* Chart placeholder */
+  .chart-area {
+    background: var(--sf-gray-1);
+    border-radius: var(--sf-radius-sm);
+    padding: 20px;
+    min-height: 260px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Funnel */
+  .funnel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 20px 0;
+  }
+  .funnel-step {
+    text-align: center;
+    flex: 1;
+    max-width: 160px;
+  }
+  .funnel-bar {
+    height: 48px;
+    border-radius: var(--sf-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .funnel-label {
+    font-size: 11px;
+    color: var(--sf-gray-5);
+    font-weight: 500;
+  }
+  .funnel-arrow {
+    font-size: 18px;
+    color: var(--sf-gray-3);
+    flex-shrink: 0;
+  }
+
+  /* Audience Segment Builder */
+  .segment-rule {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--sf-gray-1);
+    border-radius: var(--sf-radius-sm);
+    margin-bottom: 8px;
+  }
+  .segment-rule select, .segment-rule input {
+    padding: 6px 10px;
+    border: 1px solid var(--sf-gray-3);
+    border-radius: var(--sf-radius-sm);
+    font-size: 13px;
+    background: white;
+  }
+  .segment-rule .remove-rule {
+    background: none;
+    border: none;
+    color: var(--sf-red);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+  }
+  .segment-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0;
+  }
+  .segment-connector span {
+    background: var(--sf-blue-light);
+    color: var(--sf-blue);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 12px;
+    border-radius: 10px;
+  }
+
+  /* Audience Size Estimator */
+  .audience-estimate {
+    background: linear-gradient(135deg, var(--sf-blue-light), #D4E7F7);
+    border: 1px solid rgba(1,118,211,0.2);
+    border-radius: var(--sf-radius);
+    padding: 20px;
+    text-align: center;
+    margin-top: 16px;
+  }
+  .audience-estimate .estimate-number {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--sf-blue);
+  }
+  .audience-estimate .estimate-label {
+    font-size: 13px;
+    color: var(--sf-blue-dark);
+    margin-top: 4px;
+  }
+  .audience-estimate .estimate-bar {
+    background: rgba(1,118,211,0.15);
+    border-radius: 8px;
+    height: 8px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .audience-estimate .estimate-fill {
+    background: var(--sf-blue);
+    height: 100%;
+    border-radius: 8px;
+    width: 18%;
+    transition: width 0.5s;
+  }
+
+  /* Channel Selection */
+  .channel-card {
+    border: 2px solid var(--sf-gray-2);
+    border-radius: var(--sf-radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .channel-card:hover { border-color: var(--sf-blue); }
+  .channel-card.selected {
+    border-color: var(--sf-blue);
+    background: var(--sf-blue-light);
+  }
+  .channel-card .channel-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .channel-card .channel-desc {
+    font-size: 12px;
+    color: var(--sf-gray-5);
+  }
+  .channel-card .channel-check {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--sf-gray-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .channel-card.selected .channel-check {
+    background: var(--sf-blue);
+    border-color: var(--sf-blue);
+    color: white;
+  }
+  .channel-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  /* AI Recommendation */
+  .ai-rec {
+    background: linear-gradient(135deg, #F3EAFF, #EBF5FE);
+    border: 1px solid rgba(117,38,196,0.15);
+    border-radius: var(--sf-radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .ai-rec .ai-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .ai-rec .ai-icon {
+    width: 24px;
+    height: 24px;
+    background: var(--sf-purple);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+  }
+  .ai-rec .ai-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sf-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .ai-rec .ai-text {
+    font-size: 13px;
+    color: var(--sf-text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Preview: In-Marketplace Sponsored Card */
+  .marketplace-preview {
+    background: var(--sf-gray-1);
+    border-radius: var(--sf-radius);
+    padding: 24px;
+  }
+  .marketplace-search {
+    background: white;
+    border: 1px solid var(--sf-gray-2);
+    border-radius: 24px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    max-width: 600px;
+  }
+  .marketplace-search input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    flex: 1;
+    font-family: var(--sf-font);
+  }
+  .marketplace-search .search-icon { color: var(--sf-gray-4); }
+  .listing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .listing-card {
+    background: white;
+    border-radius: var(--sf-radius);
+    box-shadow: var(--sf-shadow);
+    padding: 16px;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .listing-card:hover {
+    box-shadow: var(--sf-shadow-lg);
+    transform: translateY(-2px);
+  }
+  .listing-card.sponsored {
+    border: 2px solid var(--sf-blue);
+  }
+  .listing-card .sponsored-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--sf-blue-light);
+    color: var(--sf-blue);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .listing-card .listing-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  .listing-card .listing-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .listing-card .listing-provider {
+    font-size: 12px;
+    color: var(--sf-gray-5);
+    margin-bottom: 8px;
+  }
+  .listing-card .listing-desc {
+    font-size: 12px;
+    color: var(--sf-text-secondary);
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .listing-card .listing-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+  }
+  .listing-card .stars { color: #F5A623; }
+  .listing-card .listing-installs {
+    font-size: 11px;
+    color: var(--sf-gray-5);
+  }
+  .listing-card .listing-cta {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 8px;
+    background: var(--sf-blue);
+    color: white;
+    border: none;
+    border-radius: var(--sf-radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+  .listing-card .listing-cta:hover { background: var(--sf-blue-dark); }
+
+  /* Pipeline / Flow Diagram */
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    flex-wrap: wrap;
+  }
+  .flow-node {
+    background: white;
+    border: 2px solid var(--sf-gray-2);
+    border-radius: var(--sf-radius);
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 130px;
+  }
+  .flow-node.highlight { border-color: var(--sf-blue); background: var(--sf-blue-light); }
+  .flow-node .flow-icon { font-size: 22px; margin-bottom: 6px; }
+  .flow-node .flow-label {
+    font-size: 12px; font-weight: 700; color: var(--sf-navy);
+  }
+  .flow-node .flow-sublabel {
+    font-size: 11px; color: var(--sf-gray-5); margin-top: 2px;
+  }
+  .flow-arrow { font-size: 20px; color: var(--sf-blue); }
+
+  /* Stepper */
+  .stepper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 28px;
+    padding: 0 20px;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    border: 2px solid var(--sf-gray-3);
+    color: var(--sf-gray-4);
+    background: white;
+  }
+  .step.active .step-number {
+    background: var(--sf-blue);
+    border-color: var(--sf-blue);
+    color: white;
+  }
+  .step.completed .step-number {
+    background: var(--sf-green);
+    border-color: var(--sf-green);
+    color: white;
+  }
+  .step-label { font-size: 13px; font-weight: 600; color: var(--sf-gray-4); }
+  .step.active .step-label { color: var(--sf-blue); }
+  .step.completed .step-label { color: var(--sf-green); }
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: var(--sf-gray-2);
+    margin: 0 12px;
+  }
+  .step-line.completed { background: var(--sf-green); }
+
+  /* Sparkline bars */
+  .spark-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 40px;
+  }
+  .spark-bar {
+    width: 8px;
+    border-radius: 2px 2px 0 0;
+    background: var(--sf-blue);
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .spark-bar:hover { opacity: 1; }
+
+  /* Budget slider */
+  .budget-display {
+    text-align: center;
+    margin: 16px 0;
+  }
+  .budget-display .budget-amount {
+    font-size: 32px; font-weight: 700; color: var(--sf-navy);
+  }
+  .budget-display .budget-period {
+    font-size: 13px; color: var(--sf-gray-5);
+  }
+  input[type="range"] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: var(--sf-gray-2);
+    border-radius: 3px;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--sf-blue);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  /* Toggle */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--sf-gray-1);
+  }
+  .toggle-label { font-size: 13px; font-weight: 600; }
+  .toggle-desc { font-size: 12px; color: var(--sf-gray-5); }
+  .toggle {
+    width: 40px;
+    height: 22px;
+    background: var(--sf-gray-3);
+    border-radius: 11px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle.on { background: var(--sf-blue); }
+  .toggle::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* SVG Chart: simple bar chart */
+  .chart-svg { width: 100%; }
+
+  /* Data flow architecture diagram */
+  .arch-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    padding: 20px 0;
+  }
+  .arch-node {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    border-radius: var(--sf-radius);
+    position: relative;
+  }
+  .arch-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    color: var(--sf-blue);
+    font-size: 24px;
+  }
+
+  /* Alert/banner */
+  .alert {
+    padding: 12px 16px;
+    border-radius: var(--sf-radius-sm);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .alert-info { background: var(--sf-blue-light); color: var(--sf-blue-dark); }
+  .alert-success { background: var(--sf-green-light); color: var(--sf-green); }
+  .alert-warning { background: var(--sf-orange-light); color: var(--sf-orange); }
+
+  /* Hero carousel scrollbar hide */
+  #hero-carousel::-webkit-scrollbar { display: none; }
+  #hero-carousel { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .listing-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--sf-blue-light);
+    color: var(--sf-blue);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .pill .pill-remove {
+    cursor: pointer;
+    margin-left: 2px;
+    opacity: 0.6;
+  }
+  .pill .pill-remove:hover { opacity: 1; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--sf-gray-5);
+  }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+
+  .divider { height: 1px; background: var(--sf-gray-2); margin: 20px 0; }
+
+  .progress-ring {
+    width: 80px; height: 80px;
+  }
+
+  .tooltip-wrapper { position: relative; }
+</style>
+</head>
+<body>
+
+<!-- Global Navigation -->
+<div class="global-nav">
+  <div class="logo">
+    <svg viewBox="0 0 100 70"><path d="M45.4 0c-5.1 0-9.7 2.2-12.9 5.7C29.6 2.1 25.3 0 20.5 0 9.2 0 0 9.2 0 20.5c0 11.3 9.2 20.5 20.5 20.5 1.1 0 2.2-.1 3.3-.3-0.1.9-.2 1.8-.2 2.7C23.6 55.8 34 66.2 46.4 66.2c8.7 0 16.3-5 20-12.2 3.1 3.7 7.7 6 12.8 6 9.2 0 16.7-7.5 16.7-16.7 0-.7 0-1.3-.1-2C99 39.7 100 37 100 34c0-8.3-6.7-15-15-15-2.2 0-4.2.5-6.1 1.3C76 10.9 67.5 4 57.6 4c-3.1 0-6.1.7-8.7 1.9C47.5 2.4 45 0 45.4 0z"/></svg>
+    <span>AppExchange</span>
+    <div class="logo-divider"></div>
+    <span class="product-name">Partner Advertising Platform</span>
+  </div>
+  <div class="nav-right">
+    <span style="font-size:12px;opacity:0.7">Acme CPQ Solutions</span>
+    <div class="avatar">SS</div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="nav-section">
+    <div class="nav-section-title">Overview</div>
+    <div class="nav-item active" onclick="showScreen('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Campaigns</div>
+    <div class="nav-item" onclick="showScreen('campaigns')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      All Campaigns
+      <span class="badge">3</span>
+    </div>
+    <div class="nav-item" onclick="showScreen('create')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      New Campaign
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Audiences</div>
+    <div class="nav-item" onclick="showScreen('audiences')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Audience Segments
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Measurement</div>
+    <div class="nav-item" onclick="showScreen('performance')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Performance
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Preview</div>
+    <div class="nav-item" onclick="showScreen('marketplace')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      In-Marketplace Preview
+    </div>
+  </div>
+  <div class="nav-section" style="margin-top:auto; padding-top:16px; border-top:1px solid var(--sf-gray-2);">
+    <div class="nav-section-title">Settings</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Billing & Settings
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Area -->
+<div class="main">
+
+  <!-- SCREEN 1: Dashboard -->
+  <div id="screen-dashboard" class="screen active">
+    <div class="page-header">
+      <div>
+        <h1>Advertising Dashboard</h1>
+        <div class="subtitle">Acme CPQ Solutions &mdash; Partner Console</div>
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="showScreen('create')">+ New Campaign</button>
+    </div>
+
+    <div class="ai-rec">
+      <div class="ai-header">
+        <div class="ai-icon">AI</div>
+        <div class="ai-label">Einstein Recommendation</div>
+      </div>
+      <div class="ai-text">
+        Based on your install patterns, <strong>mid-market Sales Cloud customers in Financial Services</strong> have a 3.2x higher conversion rate than your current audience. Consider creating a targeted segment for this ICP.
+        <a href="#" style="color:var(--sf-purple);font-weight:600;margin-left:4px" onclick="showScreen('create');return false;">Create segment &rarr;</a>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Impressions</div>
+        <div class="stat-value">284,391</div>
+        <div class="stat-change up">&#9650; 23% vs. last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Clicks</div>
+        <div class="stat-value">4,127</div>
+        <div class="stat-change up">&#9650; 18% vs. last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Installs (LMA)</div>
+        <div class="stat-value">312</div>
+        <div class="stat-change up">&#9650; 41% vs. last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Cost per Install</div>
+        <div class="stat-value">$18.42</div>
+        <div class="stat-change up">&#9660; 12% vs. last month</div>
+      </div>
+    </div>
+
+    <!-- Funnel Visualization -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Closed-Loop Attribution Funnel</div>
+          <div class="card-subtitle">Impressions through Active Licenses &mdash; All campaigns, last 30 days</div>
+        </div>
+      </div>
+      <div class="funnel">
+        <div class="funnel-step">
+          <div class="funnel-bar" style="background:var(--sf-navy);width:100%">284K</div>
+          <div class="funnel-label">Impressions</div>
+        </div>
+        <div class="funnel-arrow">&rarr;</div>
+        <div class="funnel-step">
+          <div class="funnel-bar" style="background:var(--sf-blue);width:85%">4,127</div>
+          <div class="funnel-label">Clicks</div>
+        </div>
+        <div class="funnel-arrow">&rarr;</div>
+        <div class="funnel-step">
+          <div class="funnel-bar" style="background:#5B9BD5;width:70%">1,843</div>
+          <div class="funnel-label">Listing Visits</div>
+        </div>
+        <div class="funnel-arrow">&rarr;</div>
+        <div class="funnel-step">
+          <div class="funnel-bar" style="background:var(--sf-purple);width:55%">687</div>
+          <div class="funnel-label">Trial Starts</div>
+        </div>
+        <div class="funnel-arrow">&rarr;</div>
+        <div class="funnel-step">
+          <div class="funnel-bar" style="background:var(--sf-green);width:40%">312</div>
+          <div class="funnel-label">Installs</div>
+        </div>
+        <div class="funnel-arrow">&rarr;</div>
+        <div class="funnel-step">
+          <div class="funnel-bar" style="background:#2D8C4E;width:30%">248</div>
+          <div class="funnel-label">Active Licenses</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Installs Over Time</div>
+          <div class="card-subtitle">Daily installs attributed to paid campaigns</div>
+        </div>
+        <div class="tabs" style="border:none;margin:0">
+          <div class="tab active">30D</div>
+          <div class="tab">90D</div>
+          <div class="tab">YTD</div>
+        </div>
+      </div>
+      <div class="chart-area">
+        <svg width="100%" height="220" viewBox="0 0 800 220" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0176D3" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#0176D3" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 200 L27 185 L54 190 L81 170 L108 175 L135 155 L162 160 L189 140 L216 145 L243 120 L270 130 L297 110 L324 115 L351 95 L378 100 L405 80 L432 85 L459 65 L486 70 L513 55 L540 60 L567 45 L594 50 L621 35 L648 40 L675 25 L702 30 L729 20 L756 22 L783 15 L800 10 L800 220 L0 220 Z" fill="url(#chartGrad)"/>
+          <path d="M0 200 L27 185 L54 190 L81 170 L108 175 L135 155 L162 160 L189 140 L216 145 L243 120 L270 130 L297 110 L324 115 L351 95 L378 100 L405 80 L432 85 L459 65 L486 70 L513 55 L540 60 L567 45 L594 50 L621 35 L648 40 L675 25 L702 30 L729 20 L756 22 L783 15" fill="none" stroke="#0176D3" stroke-width="2.5"/>
+          <!-- Grid lines -->
+          <line x1="0" y1="50" x2="800" y2="50" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4"/>
+          <line x1="0" y1="100" x2="800" y2="100" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4"/>
+          <line x1="0" y1="150" x2="800" y2="150" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4"/>
+          <text x="4" y="55" fill="#939393" font-size="11">15</text>
+          <text x="4" y="105" fill="#939393" font-size="11">10</text>
+          <text x="4" y="155" fill="#939393" font-size="11">5</text>
+          <text x="4" y="215" fill="#939393" font-size="11">0</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Active Campaigns Table -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Active Campaigns</div>
+        <button class="btn btn-secondary btn-sm" onclick="showScreen('campaigns')">View All</button>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Campaign</th>
+              <th>Channel</th>
+              <th>Status</th>
+              <th>Impressions</th>
+              <th>Clicks</th>
+              <th>Installs</th>
+              <th>CPI</th>
+              <th>Budget</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Q2 Sales Cloud - Mid Market</strong></td>
+              <td>LinkedIn + AgentExchange</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>142,891</td>
+              <td>2,134</td>
+              <td>178</td>
+              <td>$16.85</td>
+              <td>$3,000 / $5,000</td>
+            </tr>
+            <tr>
+              <td><strong>Financial Services ICP</strong></td>
+              <td>Google + LinkedIn</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>98,342</td>
+              <td>1,456</td>
+              <td>98</td>
+              <td>$20.41</td>
+              <td>$2,000 / $3,000</td>
+            </tr>
+            <tr>
+              <td><strong>Agentforce Early Adopters</strong></td>
+              <td>AgentExchange Sponsored</td>
+              <td><span class="status-badge status-paused">Paused</span></td>
+              <td>43,158</td>
+              <td>537</td>
+              <td>36</td>
+              <td>$19.44</td>
+              <td>$700 / $2,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Campaign List -->
+  <div id="screen-campaigns" class="screen">
+    <div class="page-header">
+      <div>
+        <h1>Campaigns</h1>
+        <div class="subtitle">Manage all your advertising campaigns</div>
+      </div>
+      <button class="btn btn-primary" onclick="showScreen('create')">+ New Campaign</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active">All (5)</div>
+      <div class="tab">Active (2)</div>
+      <div class="tab">Paused (1)</div>
+      <div class="tab">Ended (1)</div>
+      <div class="tab">Draft (1)</div>
+    </div>
+
+    <div class="card" style="padding:0">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Campaign Name</th>
+              <th>Channels</th>
+              <th>Audience</th>
+              <th>Status</th>
+              <th>Impressions</th>
+              <th>Clicks</th>
+              <th>CTR</th>
+              <th>Installs</th>
+              <th>CPI</th>
+              <th>Spend / Budget</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>Q2 Sales Cloud - Mid Market</strong><br>
+                <span style="font-size:11px;color:var(--sf-gray-5)">Started Apr 1, 2026</span>
+              </td>
+              <td><span class="pill">LinkedIn</span><span class="pill">AgentExchange</span></td>
+              <td>Sales Cloud, 500-5K emp, NA</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>142,891</td>
+              <td>2,134</td>
+              <td>1.49%</td>
+              <td>178</td>
+              <td>$16.85</td>
+              <td>$3,000 / $5,000</td>
+              <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Financial Services ICP</strong><br>
+                <span style="font-size:11px;color:var(--sf-gray-5)">Started Mar 15, 2026</span>
+              </td>
+              <td><span class="pill">Google</span><span class="pill">LinkedIn</span></td>
+              <td>Financial Services, Enterprise</td>
+              <td><span class="status-badge status-active">Active</span></td>
+              <td>98,342</td>
+              <td>1,456</td>
+              <td>1.48%</td>
+              <td>98</td>
+              <td>$20.41</td>
+              <td>$2,000 / $3,000</td>
+              <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Agentforce Early Adopters</strong><br>
+                <span style="font-size:11px;color:var(--sf-gray-5)">Started Mar 1, 2026</span>
+              </td>
+              <td><span class="pill">AgentExchange</span></td>
+              <td>Agentforce users, all sizes</td>
+              <td><span class="status-badge status-paused">Paused</span></td>
+              <td>43,158</td>
+              <td>537</td>
+              <td>1.24%</td>
+              <td>36</td>
+              <td>$19.44</td>
+              <td>$700 / $2,000</td>
+              <td><button class="btn btn-secondary btn-sm">Resume</button></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Q1 Broad Awareness</strong><br>
+                <span style="font-size:11px;color:var(--sf-gray-5)">Jan 5 - Mar 1, 2026</span>
+              </td>
+              <td><span class="pill">LinkedIn</span><span class="pill">Meta</span></td>
+              <td>All Salesforce, SMB-Mid</td>
+              <td><span class="status-badge status-ended">Ended</span></td>
+              <td>221,440</td>
+              <td>2,891</td>
+              <td>1.31%</td>
+              <td>152</td>
+              <td>$23.03</td>
+              <td>$3,500 / $3,500</td>
+              <td><button class="btn btn-secondary btn-sm">Clone</button></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Summer Push - Service Cloud</strong><br>
+                <span style="font-size:11px;color:var(--sf-gray-5)">Draft</span>
+              </td>
+              <td><span class="pill" style="background:var(--sf-gray-1);color:var(--sf-gray-5)">Not set</span></td>
+              <td>Service Cloud, Mid-Enterprise</td>
+              <td><span class="status-badge status-draft">Draft</span></td>
+              <td>&mdash;</td>
+              <td>&mdash;</td>
+              <td>&mdash;</td>
+              <td>&mdash;</td>
+              <td>&mdash;</td>
+              <td>$0 / $4,000</td>
+              <td><button class="btn btn-primary btn-sm" onclick="showScreen('create')">Edit</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Create Campaign (Multi-step) -->
+  <div id="screen-create" class="screen">
+    <div class="page-header">
+      <div>
+        <h1>Create Campaign</h1>
+        <div class="subtitle">Define your audience, channels, budget, and creative</div>
+      </div>
+    </div>
+
+    <div class="stepper">
+      <div class="step completed" id="step-1-indicator">
+        <div class="step-number">&#10003;</div>
+        <div class="step-label">Audience</div>
+      </div>
+      <div class="step-line completed"></div>
+      <div class="step active" id="step-2-indicator">
+        <div class="step-number">2</div>
+        <div class="step-label">Channels</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step-3-indicator">
+        <div class="step-number">3</div>
+        <div class="step-label">Budget & Schedule</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step-4-indicator">
+        <div class="step-number">4</div>
+        <div class="step-label">Review & Launch</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Audience / ICP Builder -->
+    <div id="step-1" class="step-content" style="display:none">
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">Define Your ICP Segment</div>
+
+            <div class="ai-rec" style="margin-bottom:16px">
+              <div class="ai-header">
+                <div class="ai-icon">AI</div>
+                <div class="ai-label">Einstein ICP Suggestion</div>
+              </div>
+              <div class="ai-text">
+                Partners with similar install patterns see best results targeting <strong>Sales Cloud Enterprise customers, 500-5,000 employees, Financial Services & Technology verticals</strong>.
+                <a href="#" style="color:var(--sf-purple);font-weight:600" onclick="return false">Apply suggestion</a>
+              </div>
+            </div>
+
+            <div class="form-label" style="margin-bottom:8px;font-size:13px;font-weight:700">Targeting Rules</div>
+
+            <div class="segment-rule">
+              <select><option>Salesforce Product</option></select>
+              <select><option>includes</option><option>excludes</option></select>
+              <select><option>Sales Cloud</option><option>Service Cloud</option><option>Marketing Cloud</option><option>Commerce Cloud</option><option>Data Cloud</option></select>
+              <button class="remove-rule">&times;</button>
+            </div>
+            <div class="segment-connector"><span>AND</span></div>
+            <div class="segment-rule">
+              <select><option>Company Size</option></select>
+              <select><option>between</option></select>
+              <input type="text" value="500" style="width:80px"> &ndash; <input type="text" value="5,000" style="width:80px"> employees
+              <button class="remove-rule">&times;</button>
+            </div>
+            <div class="segment-connector"><span>AND</span></div>
+            <div class="segment-rule">
+              <select><option>Industry</option></select>
+              <select><option>is any of</option></select>
+              <select><option>Financial Services, Technology</option></select>
+              <button class="remove-rule">&times;</button>
+            </div>
+            <div class="segment-connector"><span>AND</span></div>
+            <div class="segment-rule">
+              <select><option>Agentforce Usage</option></select>
+              <select><option>is</option></select>
+              <select><option>Active</option><option>Inactive</option><option>Any</option></select>
+              <button class="remove-rule">&times;</button>
+            </div>
+            <div class="segment-connector"><span>AND</span></div>
+            <div class="segment-rule">
+              <select><option>Competitor App Installed</option></select>
+              <select><option>excludes</option></select>
+              <select><option>Acme CPQ (your app)</option></select>
+              <button class="remove-rule">&times;</button>
+            </div>
+            <div class="segment-connector"><span>AND</span></div>
+            <div class="segment-rule">
+              <select><option>Region</option></select>
+              <select><option>is</option></select>
+              <select><option>North America</option><option>EMEA</option><option>APAC</option></select>
+              <button class="remove-rule">&times;</button>
+            </div>
+
+            <button class="btn btn-secondary btn-sm" style="margin-top:8px">+ Add Rule</button>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">Audience Estimate</div>
+            <div class="audience-estimate">
+              <div class="estimate-number">27,340</div>
+              <div class="estimate-label">Estimated Salesforce orgs matched</div>
+              <div class="estimate-bar"><div class="estimate-fill" style="width:18%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sf-gray-4);margin-top:4px">
+                <span>0</span>
+                <span>150,000+ total orgs</span>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div style="font-size:13px;font-weight:700;margin-bottom:12px">Segment Breakdown</div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sf-gray-1)">
+              <span style="font-size:13px">Sales Cloud orgs</span>
+              <span style="font-size:13px;font-weight:600">68,420</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sf-gray-1)">
+              <span style="font-size:13px">+ 500-5K employees</span>
+              <span style="font-size:13px;font-weight:600">41,200</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sf-gray-1)">
+              <span style="font-size:13px">+ Financial Services & Tech</span>
+              <span style="font-size:13px;font-weight:600">32,100</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sf-gray-1)">
+              <span style="font-size:13px">+ Agentforce Active</span>
+              <span style="font-size:13px;font-weight:600">28,740</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sf-gray-1)">
+              <span style="font-size:13px">- Already installed</span>
+              <span style="font-size:13px;font-weight:600;color:var(--sf-red)">-1,400</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:700;font-size:14px">
+              <span>Final audience</span>
+              <span style="color:var(--sf-blue)">27,340</span>
+            </div>
+
+            <div class="divider"></div>
+            <div class="alert alert-info" style="margin:0">
+              <strong>Data Source:</strong> LMA install signals via Data Cloud. Audience syncs every 6 hours. Min. audience size: 1,000 orgs.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+        <button class="btn btn-primary" onclick="goToStep(2)">Next: Channels &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Channel Selection -->
+    <div id="step-2" class="step-content">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:4px">Select Advertising Channels</div>
+        <div class="card-subtitle" style="margin-bottom:20px">Choose where your ads will appear. External channels reach decision-makers; in-marketplace placements capture active browsers.</div>
+
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;color:var(--sf-gray-4);margin-bottom:12px">External Channels (Top of Funnel)</div>
+
+        <div class="grid-3" style="margin-bottom:24px">
+          <div class="channel-card selected" onclick="this.classList.toggle('selected')">
+            <div class="channel-check">&#10003;</div>
+            <div class="channel-icon">in</div>
+            <div class="channel-name">LinkedIn</div>
+            <div class="channel-desc">Company domain match + job title targeting. Reaches VPs, Directors, and Admins at matched orgs.</div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--sf-gray-2)">
+              <div style="font-size:11px;color:var(--sf-gray-5)">Est. CPM: $28-45</div>
+              <div style="font-size:11px;color:var(--sf-gray-5)">Best for: Enterprise decision-makers</div>
+            </div>
+          </div>
+          <div class="channel-card selected" onclick="this.classList.toggle('selected')">
+            <div class="channel-check">&#10003;</div>
+            <div class="channel-icon">G</div>
+            <div class="channel-name">Google</div>
+            <div class="channel-desc">Customer Match via hashed email. Reaches users across Gmail, YouTube, and Search.</div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--sf-gray-2)">
+              <div style="font-size:11px;color:var(--sf-gray-5)">Est. CPC: $2.50-5.00</div>
+              <div style="font-size:11px;color:var(--sf-gray-5)">Best for: High-intent search capture</div>
+            </div>
+          </div>
+          <div class="channel-card" onclick="this.classList.toggle('selected')">
+            <div class="channel-check"></div>
+            <div class="channel-icon">f</div>
+            <div class="channel-name">Meta</div>
+            <div class="channel-desc">Custom Audience via hashed email. Reaches users on Facebook and Instagram.</div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--sf-gray-2)">
+              <div style="font-size:11px;color:var(--sf-gray-5)">Est. CPM: $12-22</div>
+              <div style="font-size:11px;color:var(--sf-gray-5)">Best for: SMB segment partners</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;color:var(--sf-gray-4);margin-bottom:12px">In-Marketplace (Bottom of Funnel)</div>
+
+        <div class="grid-3">
+          <div class="channel-card selected" onclick="this.classList.toggle('selected')">
+            <div class="channel-check">&#10003;</div>
+            <div class="channel-icon" style="color:var(--sf-blue)">&#9733;</div>
+            <div class="channel-name">AgentExchange Sponsored</div>
+            <div class="channel-desc">Promoted listing in search results and category pages. Users are already in discovery mode.</div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--sf-gray-2)">
+              <div style="font-size:11px;color:var(--sf-gray-5)">Est. CPC: $1.80-3.50</div>
+              <div style="font-size:11px;color:var(--sf-gray-5)">Best for: Intent-capture, conversions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-rec">
+        <div class="ai-header">
+          <div class="ai-icon">AI</div>
+          <div class="ai-label">Channel Recommendation</div>
+        </div>
+        <div class="ai-text">
+          For your audience (mid-market, Financial Services), <strong>LinkedIn + AgentExchange</strong> is the highest-performing channel mix. Partners with similar ICPs see a 2.4x better install rate with this combination vs. Google alone.
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-top:8px">
+        <button class="btn btn-secondary" onclick="goToStep(1)">&larr; Back</button>
+        <button class="btn btn-primary" onclick="goToStep(3)">Next: Budget & Schedule &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Budget & Schedule -->
+    <div id="step-3" class="step-content" style="display:none">
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">Campaign Budget</div>
+
+            <div class="form-group">
+              <div class="form-label">Campaign Name</div>
+              <input class="form-input" type="text" value="Q2 Financial Services - Mid Market Push">
+            </div>
+
+            <div class="form-group">
+              <div class="form-label">Budget Type</div>
+              <div class="grid-2">
+                <div class="channel-card selected" style="padding:12px;text-align:center">
+                  <div style="font-size:13px;font-weight:700">Monthly Budget</div>
+                  <div style="font-size:11px;color:var(--sf-gray-5)">Spend cap per month</div>
+                </div>
+                <div class="channel-card" style="padding:12px;text-align:center">
+                  <div style="font-size:13px;font-weight:700">Total Budget</div>
+                  <div style="font-size:11px;color:var(--sf-gray-5)">Lifetime spend cap</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="budget-display">
+              <div class="budget-amount">$5,000</div>
+              <div class="budget-period">per month</div>
+            </div>
+            <input type="range" min="500" max="25000" value="5000" step="500" oninput="document.querySelector('.budget-amount').textContent='$'+Number(this.value).toLocaleString()">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sf-gray-4);margin-top:4px">
+              <span>$500</span>
+              <span>$25,000</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="form-group">
+              <div class="form-label">Budget Allocation by Channel</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-size:12px;width:140px">LinkedIn (40%)</span>
+                <div style="flex:1;height:8px;background:var(--sf-gray-2);border-radius:4px;overflow:hidden">
+                  <div style="width:40%;height:100%;background:#0A66C2;border-radius:4px"></div>
+                </div>
+                <span style="font-size:12px;font-weight:600">$2,000</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-size:12px;width:140px">Google (35%)</span>
+                <div style="flex:1;height:8px;background:var(--sf-gray-2);border-radius:4px;overflow:hidden">
+                  <div style="width:35%;height:100%;background:#4285F4;border-radius:4px"></div>
+                </div>
+                <span style="font-size:12px;font-weight:600">$1,750</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:12px;width:140px">AgentExchange (25%)</span>
+                <div style="flex:1;height:8px;background:var(--sf-gray-2);border-radius:4px;overflow:hidden">
+                  <div style="width:25%;height:100%;background:var(--sf-blue);border-radius:4px"></div>
+                </div>
+                <span style="font-size:12px;font-weight:600">$1,250</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">Schedule & Pacing</div>
+            <div class="grid-2">
+              <div class="form-group">
+                <div class="form-label">Start Date</div>
+                <input class="form-input" type="date" value="2026-05-05">
+              </div>
+              <div class="form-group">
+                <div class="form-label">End Date (optional)</div>
+                <input class="form-input" type="date" value="2026-08-05">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-label">Pacing</div>
+              <select class="form-select">
+                <option>Even distribution (recommended)</option>
+                <option>Front-loaded</option>
+                <option>Back-loaded</option>
+              </select>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card-title" style="margin-bottom:16px">Estimated Performance</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div style="background:var(--sf-gray-1);border-radius:var(--sf-radius-sm);padding:12px;text-align:center">
+                <div style="font-size:20px;font-weight:700;color:var(--sf-navy)">110K-165K</div>
+                <div style="font-size:11px;color:var(--sf-gray-5)">Est. Impressions / mo</div>
+              </div>
+              <div style="background:var(--sf-gray-1);border-radius:var(--sf-radius-sm);padding:12px;text-align:center">
+                <div style="font-size:20px;font-weight:700;color:var(--sf-navy)">1,500-2,200</div>
+                <div style="font-size:11px;color:var(--sf-gray-5)">Est. Clicks / mo</div>
+              </div>
+              <div style="background:var(--sf-green-light);border-radius:var(--sf-radius-sm);padding:12px;text-align:center">
+                <div style="font-size:20px;font-weight:700;color:var(--sf-green)">90-140</div>
+                <div style="font-size:11px;color:var(--sf-green)">Est. Installs / mo</div>
+              </div>
+              <div style="background:var(--sf-blue-light);border-radius:var(--sf-radius-sm);padding:12px;text-align:center">
+                <div style="font-size:20px;font-weight:700;color:var(--sf-blue)">$17-22</div>
+                <div style="font-size:11px;color:var(--sf-blue)">Est. Cost per Install</div>
+              </div>
+            </div>
+
+            <div class="alert alert-info" style="margin-top:16px;margin-bottom:0">
+              Estimates based on historical performance of similar audience segments and channel mix.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px">Notifications</div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Slack Alerts</div>
+                <div class="toggle-desc">Get campaign updates in #acme-marketing</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Email Weekly Summary</div>
+                <div class="toggle-desc">Performance digest every Monday</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row" style="border:none">
+              <div>
+                <div class="toggle-label">Auto-pause on Budget</div>
+                <div class="toggle-desc">Pause campaign when budget is exhausted</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px">
+        <button class="btn btn-secondary" onclick="goToStep(2)">&larr; Back</button>
+        <button class="btn btn-primary" onclick="goToStep(4)">Next: Review & Launch &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Review & Launch -->
+    <div id="step-4" class="step-content" style="display:none">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:20px">Campaign Summary</div>
+
+        <div class="grid-2" style="gap:24px">
+          <div>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--sf-gray-4);margin-bottom:8px">Campaign Details</div>
+            <div style="padding:8px 0;border-bottom:1px solid var(--sf-gray-1);display:flex;justify-content:space-between">
+              <span style="color:var(--sf-gray-5);font-size:13px">Name</span>
+              <span style="font-weight:600;font-size:13px">Q2 Financial Services - Mid Market Push</span>
+            </div>
+            <div style="padding:8px 0;border-bottom:1px solid var(--sf-gray-1);display:flex;justify-content:space-between">
+              <span style="color:var(--sf-gray-5);font-size:13px">Listing</span>
+              <span style="font-weight:600;font-size:13px">Acme CPQ Solutions</span>
+            </div>
+            <div style="padding:8px 0;border-bottom:1px solid var(--sf-gray-1);display:flex;justify-content:space-between">
+              <span style="color:var(--sf-gray-5);font-size:13px">Schedule</span>
+              <span style="font-weight:600;font-size:13px">May 5 - Aug 5, 2026</span>
+            </div>
+            <div style="padding:8px 0;border-bottom:1px solid var(--sf-gray-1);display:flex;justify-content:space-between">
+              <span style="color:var(--sf-gray-5);font-size:13px">Monthly Budget</span>
+              <span style="font-weight:600;font-size:13px">$5,000</span>
+            </div>
+            <div style="padding:8px 0;display:flex;justify-content:space-between">
+              <span style="color:var(--sf-gray-5);font-size:13px">Max Total Spend</span>
+              <span style="font-weight:600;font-size:13px">$15,000</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--sf-gray-4);margin-bottom:8px">Audience & Channels</div>
+            <div style="padding:8px 0;border-bottom:1px solid var(--sf-gray-1)">
+              <span style="color:var(--sf-gray-5);font-size:13px">Target Segment</span>
+              <div style="margin-top:4px">
+                <span class="pill">Sales Cloud</span>
+                <span class="pill">500-5K emp</span>
+                <span class="pill">Financial Services</span>
+                <span class="pill">Technology</span>
+                <span class="pill">Agentforce Active</span>
+                <span class="pill">North America</span>
+              </div>
+            </div>
+            <div style="padding:8px 0;border-bottom:1px solid var(--sf-gray-1);display:flex;justify-content:space-between">
+              <span style="color:var(--sf-gray-5);font-size:13px">Audience Size</span>
+              <span style="font-weight:600;font-size:13px;color:var(--sf-blue)">27,340 orgs</span>
+            </div>
+            <div style="padding:8px 0">
+              <span style="color:var(--sf-gray-5);font-size:13px">Channels</span>
+              <div style="margin-top:4px">
+                <span class="pill">LinkedIn (40%)</span>
+                <span class="pill">Google (35%)</span>
+                <span class="pill">AgentExchange (25%)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Data Flow Architecture -->
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--sf-gray-4);margin-bottom:12px">How Your Campaign Will Run</div>
+        <div class="flow-diagram">
+          <div class="flow-node highlight">
+            <div class="flow-icon">&#128202;</div>
+            <div class="flow-label">LMA Data</div>
+            <div class="flow-sublabel">Install signals</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node highlight">
+            <div class="flow-icon">&#9729;</div>
+            <div class="flow-label">Data Cloud</div>
+            <div class="flow-sublabel">Segmentation</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node highlight">
+            <div class="flow-icon">&#128225;</div>
+            <div class="flow-label">Ad Audiences</div>
+            <div class="flow-sublabel">Matched audience</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node">
+            <div class="flow-icon">&#128640;</div>
+            <div class="flow-label">Ad Delivery</div>
+            <div class="flow-sublabel">LinkedIn, Google, AX</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node">
+            <div class="flow-icon">&#128100;</div>
+            <div class="flow-label">Customer</div>
+            <div class="flow-sublabel">Clicks &rarr; Install</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node" style="border-color:var(--sf-green);background:var(--sf-green-light)">
+            <div class="flow-icon">&#9989;</div>
+            <div class="flow-label">LMA Event</div>
+            <div class="flow-sublabel">Attribution</div>
+          </div>
+        </div>
+
+        <div class="alert alert-success" style="margin-top:8px">
+          <strong>Closed-loop measurement enabled.</strong> Installs will be attributed back to this campaign via LMA event tracking with UTM parameters.
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-top:8px">
+        <button class="btn btn-secondary" onclick="goToStep(3)">&larr; Back</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary">Save as Draft</button>
+          <button class="btn btn-success btn-lg" onclick="alert('Campaign launched! You\'ll receive a Slack notification when your first impressions start delivering.')">Launch Campaign &#128640;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Audience Segments -->
+  <div id="screen-audiences" class="screen">
+    <div class="page-header">
+      <div>
+        <h1>Audience Segments</h1>
+        <div class="subtitle">Signal-based segments powered by Data Cloud + LMA</div>
+      </div>
+      <button class="btn btn-primary" onclick="showScreen('create');goToStep(1)">+ New Segment</button>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>How it works:</strong> Segments are built from Salesforce first-party signals (LMA install data, org metadata, Agentforce usage) ingested into Data Cloud. Audiences sync to ad platforms every 6 hours. All data is aggregate/anonymized &mdash; no individual PII leaves Salesforce.
+    </div>
+
+    <div class="card" style="padding:0">
+      <table>
+        <thead>
+          <tr>
+            <th>Segment Name</th>
+            <th>Criteria</th>
+            <th>Matched Orgs</th>
+            <th>Last Synced</th>
+            <th>Used By</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Sales Cloud Mid-Market - FinServ & Tech</strong></td>
+            <td>
+              <span class="pill">Sales Cloud</span><span class="pill">500-5K</span><span class="pill">FinServ</span><span class="pill">Tech</span><span class="pill">Agentforce</span>
+            </td>
+            <td><strong>27,340</strong></td>
+            <td>2 hours ago</td>
+            <td>2 campaigns</td>
+            <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+          </tr>
+          <tr>
+            <td><strong>Enterprise - All Verticals</strong></td>
+            <td>
+              <span class="pill">Enterprise tier</span><span class="pill">5K+ emp</span><span class="pill">NA</span>
+            </td>
+            <td><strong>14,280</strong></td>
+            <td>2 hours ago</td>
+            <td>1 campaign</td>
+            <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+          </tr>
+          <tr>
+            <td><strong>Agentforce Early Adopters</strong></td>
+            <td>
+              <span class="pill">Agentforce Active</span><span class="pill">Any size</span><span class="pill">NA</span>
+            </td>
+            <td><strong>8,920</strong></td>
+            <td>2 hours ago</td>
+            <td>1 campaign</td>
+            <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+          </tr>
+          <tr>
+            <td><strong>SMB Broad - No CPQ Installed</strong></td>
+            <td>
+              <span class="pill">1-500 emp</span><span class="pill">No Acme CPQ</span><span class="pill">NA</span>
+            </td>
+            <td><strong>42,100</strong></td>
+            <td>2 hours ago</td>
+            <td>0 campaigns</td>
+            <td><button class="btn btn-secondary btn-sm">Edit</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ai-rec" style="margin-top:16px">
+      <div class="ai-header">
+        <div class="ai-icon">AI</div>
+        <div class="ai-label">Lookalike Suggestion</div>
+      </div>
+      <div class="ai-text">
+        Based on your top-converting installs, customers in the <strong>Healthcare & Life Sciences</strong> vertical with Service Cloud show a similar profile to your best Financial Services customers. Estimated segment size: <strong>5,400 orgs</strong>.
+        <a href="#" style="color:var(--sf-purple);font-weight:600" onclick="return false">Create lookalike segment &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Performance / Measurement Dashboard -->
+  <div id="screen-performance" class="screen">
+    <div class="page-header">
+      <div>
+        <h1>Performance & Attribution</h1>
+        <div class="subtitle">Closed-loop measurement: ad spend &rarr; listing visits &rarr; installs &rarr; LMA license events</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <select class="form-select" style="width:auto;padding:6px 12px">
+          <option>All Campaigns</option>
+          <option>Q2 Sales Cloud - Mid Market</option>
+          <option>Financial Services ICP</option>
+        </select>
+        <select class="form-select" style="width:auto;padding:6px 12px">
+          <option>Last 30 days</option>
+          <option>Last 90 days</option>
+          <option>Year to date</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Spend</div>
+        <div class="stat-value">$5,742</div>
+        <div class="stat-change" style="color:var(--sf-text-secondary)">of $10,000 budget</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Installs</div>
+        <div class="stat-value">312</div>
+        <div class="stat-change up">&#9650; 41% vs. prior period</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Cost per Install</div>
+        <div class="stat-value">$18.40</div>
+        <div class="stat-change up">&#9660; 12% (improving)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ROAS (Est.)</div>
+        <div class="stat-value">4.8x</div>
+        <div class="stat-change" style="color:var(--sf-text-secondary)">based on avg. LTV of $88/install</div>
+      </div>
+    </div>
+
+    <!-- Full Funnel Breakdown -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Full-Funnel Attribution</div>
+          <div class="card-subtitle">Every stage measured, from impression to active license</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:2px;text-align:center">
+        <div style="padding:16px;background:var(--sf-navy);border-radius:var(--sf-radius-sm) 0 0 0;color:white">
+          <div style="font-size:22px;font-weight:700">284,391</div>
+          <div style="font-size:11px;opacity:0.8;margin-top:4px">Impressions</div>
+        </div>
+        <div style="padding:16px;background:var(--sf-blue);color:white">
+          <div style="font-size:22px;font-weight:700">4,127</div>
+          <div style="font-size:11px;opacity:0.8;margin-top:4px">Clicks</div>
+          <div style="font-size:11px;opacity:0.7;margin-top:2px">1.45% CTR</div>
+        </div>
+        <div style="padding:16px;background:#5B9BD5;color:white">
+          <div style="font-size:22px;font-weight:700">1,843</div>
+          <div style="font-size:11px;opacity:0.8;margin-top:4px">Listing Visits</div>
+          <div style="font-size:11px;opacity:0.7;margin-top:2px">44.7% of clicks</div>
+        </div>
+        <div style="padding:16px;background:var(--sf-purple);color:white">
+          <div style="font-size:22px;font-weight:700">687</div>
+          <div style="font-size:11px;opacity:0.8;margin-top:4px">Trial Starts</div>
+          <div style="font-size:11px;opacity:0.7;margin-top:2px">37.3% of visits</div>
+        </div>
+        <div style="padding:16px;background:var(--sf-green);color:white">
+          <div style="font-size:22px;font-weight:700">312</div>
+          <div style="font-size:11px;opacity:0.8;margin-top:4px">Installs (LMA)</div>
+          <div style="font-size:11px;opacity:0.7;margin-top:2px">45.4% trial&rarr;install</div>
+        </div>
+        <div style="padding:16px;background:#2D8C4E;border-radius:0 var(--sf-radius-sm) 0 0;color:white">
+          <div style="font-size:22px;font-weight:700">248</div>
+          <div style="font-size:11px;opacity:0.8;margin-top:4px">Active Licenses</div>
+          <div style="font-size:11px;opacity:0.7;margin-top:2px">79.5% activation</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Channel Breakdown -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">Performance by Channel</div>
+        <table>
+          <thead>
+            <tr><th>Channel</th><th>Spend</th><th>Impressions</th><th>Clicks</th><th>Installs</th><th>CPI</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>LinkedIn</strong></td>
+              <td>$2,297</td>
+              <td>68,421</td>
+              <td>1,642</td>
+              <td>148</td>
+              <td style="color:var(--sf-green);font-weight:600">$15.52</td>
+            </tr>
+            <tr>
+              <td><strong>Google</strong></td>
+              <td>$2,010</td>
+              <td>142,340</td>
+              <td>1,612</td>
+              <td>102</td>
+              <td>$19.71</td>
+            </tr>
+            <tr>
+              <td><strong>AgentExchange</strong></td>
+              <td>$1,435</td>
+              <td>73,630</td>
+              <td>873</td>
+              <td>62</td>
+              <td style="font-weight:600">$23.15</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">Top Converting Segments</div>
+        <table>
+          <thead>
+            <tr><th>Segment</th><th>Installs</th><th>Conv. Rate</th><th>CPI</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>FinServ, 1K-5K, Sales Cloud</strong></td>
+              <td>89</td>
+              <td style="color:var(--sf-green);font-weight:600">3.2%</td>
+              <td style="color:var(--sf-green);font-weight:600">$12.40</td>
+            </tr>
+            <tr>
+              <td><strong>Tech, 500-2K, Agentforce</strong></td>
+              <td>72</td>
+              <td style="color:var(--sf-green);font-weight:600">2.8%</td>
+              <td>$14.90</td>
+            </tr>
+            <tr>
+              <td><strong>Healthcare, Enterprise</strong></td>
+              <td>45</td>
+              <td>1.9%</td>
+              <td>$18.22</td>
+            </tr>
+            <tr>
+              <td><strong>Manufacturing, Mid-Market</strong></td>
+              <td>28</td>
+              <td>1.4%</td>
+              <td>$22.50</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="ai-rec">
+      <div class="ai-header">
+        <div class="ai-icon">AI</div>
+        <div class="ai-label">Einstein Optimization Insight</div>
+      </div>
+      <div class="ai-text">
+        Your <strong>LinkedIn &rarr; Financial Services segment</strong> has the lowest CPI ($12.40). Shifting 15% of Google budget to this segment could yield ~20 additional installs/month at lower cost.
+        <a href="#" style="color:var(--sf-purple);font-weight:600" onclick="return false">Apply recommendation &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 6: In-Marketplace Preview -->
+  <div id="screen-marketplace" class="screen">
+    <div class="page-header">
+      <div>
+        <h1>In-Marketplace Placement Preview</h1>
+        <div class="subtitle">See how your sponsored listing appears across AgentExchange surfaces</div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      Sponsored placements appear in two contexts: the <strong>homepage/category browsing</strong> experience (where most users land) and <strong>search results</strong>. Both are discovery-intent surfaces where promoted content feels helpful, not intrusive.
+    </div>
+
+    <div class="tabs" id="marketplace-tabs">
+      <div class="tab active" onclick="showMarketplaceTab('browse')">Homepage / Browsing</div>
+      <div class="tab" onclick="showMarketplaceTab('search')">Search Results</div>
+    </div>
+
+    <!-- TAB 1: Homepage / Browsing Experience -->
+    <div id="mp-tab-browse" class="marketplace-preview">
+
+      <!-- Hero Banner + Search -->
+      <div style="background:linear-gradient(135deg,#032D60 0%,#0176D3 60%,#1B96FF 100%);border-radius:var(--sf-radius);padding:40px 32px;margin-bottom:24px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-20px;right:-20px;width:200px;height:200px;background:rgba(255,255,255,0.05);border-radius:50%"></div>
+        <div style="max-width:600px">
+          <div style="font-size:24px;font-weight:700;color:white;margin-bottom:8px">AgentExchange</div>
+          <div style="font-size:15px;color:rgba(255,255,255,0.85);margin-bottom:20px">Discover 13,000+ agents, apps, and tools for Salesforce & Slack</div>
+          <div class="marketplace-search" style="margin-bottom:0;max-width:500px">
+            <span class="search-icon">&#128269;</span>
+            <input type="text" placeholder="Search apps, agents, and tools...">
+          </div>
+        </div>
+      </div>
+
+      <!-- SCROLLABLE HERO CAROUSEL: multiple advertisers compete for this slot -->
+      <div style="margin-bottom:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;color:var(--sf-gray-4)">Featured Partners</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div id="hero-dot-0" style="width:8px;height:8px;border-radius:50%;background:var(--sf-blue);cursor:pointer" onclick="scrollHeroTo(0)"></div>
+            <div id="hero-dot-1" style="width:8px;height:8px;border-radius:50%;background:var(--sf-gray-3);cursor:pointer" onclick="scrollHeroTo(1)"></div>
+            <div id="hero-dot-2" style="width:8px;height:8px;border-radius:50%;background:var(--sf-gray-3);cursor:pointer" onclick="scrollHeroTo(2)"></div>
+            <div id="hero-dot-3" style="width:8px;height:8px;border-radius:50%;background:var(--sf-gray-3);cursor:pointer" onclick="scrollHeroTo(3)"></div>
+          </div>
+        </div>
+        <div id="hero-carousel" style="display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding-bottom:8px;-webkit-overflow-scrolling:touch" onscroll="updateHeroDots()">
+          <!-- Hero card 1: Acme CPQ (your ad) — shown because viewer's org matches your ICP -->
+          <div style="min-width:100%;scroll-snap-align:start;background:white;border:2px solid var(--sf-blue);border-radius:var(--sf-radius);padding:24px;display:flex;align-items:center;gap:20px;position:relative;box-shadow:var(--sf-shadow)">
+            <div style="position:absolute;top:10px;right:14px;display:flex;align-items:center;gap:8px">
+              <span style="background:var(--sf-blue-light);color:var(--sf-blue);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px">Sponsored</span>
+            </div>
+            <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#0176D3,#032D60);color:white;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;flex-shrink:0">A</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:16px;font-weight:700;color:var(--sf-navy)">Acme CPQ Solutions</div>
+              <div style="font-size:12px;color:var(--sf-gray-5);margin-bottom:4px">by Acme Inc.</div>
+              <div style="font-size:13px;color:var(--sf-text-secondary);margin-bottom:6px">AI-powered Configure, Price, Quote for Salesforce. Streamline complex quoting with intelligent pricing and Agentforce integration.</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span style="font-weight:600;font-size:12px">4.8</span><span style="color:var(--sf-gray-5);font-size:12px">(342)</span>
+                <span style="color:var(--sf-gray-3)">|</span>
+                <span style="font-size:12px;color:var(--sf-gray-5)">12,400+ installs</span>
+              </div>
+              <div style="margin-top:6px;font-size:11px;color:var(--sf-gray-4);display:flex;align-items:center;gap:4px;cursor:help" title="Your org uses Sales Cloud Enterprise in Financial Services with 1,200 employees and Agentforce active. This app targets that profile.">&#9432; Why am I seeing this?</div>
+            </div>
+            <button class="btn btn-primary btn-lg" style="flex-shrink:0">Get It Now</button>
+          </div>
+
+          <!-- Hero card 2: OwnBackup (different advertiser) — shown because viewer doesn't have backup -->
+          <div style="min-width:100%;scroll-snap-align:start;background:white;border:2px solid #2E844A;border-radius:var(--sf-radius);padding:24px;display:flex;align-items:center;gap:20px;position:relative;box-shadow:var(--sf-shadow)">
+            <div style="position:absolute;top:10px;right:14px;display:flex;align-items:center;gap:8px">
+              <span style="background:var(--sf-green-light);color:var(--sf-green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px">Sponsored</span>
+            </div>
+            <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#2E844A,#1A5C2E);color:white;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;flex-shrink:0">O</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:16px;font-weight:700;color:var(--sf-navy)">OwnBackup</div>
+              <div style="font-size:12px;color:var(--sf-gray-5);margin-bottom:4px">by Own Company</div>
+              <div style="font-size:13px;color:var(--sf-text-secondary);margin-bottom:6px">Comprehensive data protection, backup, and recovery for Salesforce. Protect your org from data loss and corruption.</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span style="font-weight:600;font-size:12px">4.9</span><span style="color:var(--sf-gray-5);font-size:12px">(1,842)</span>
+                <span style="color:var(--sf-gray-3)">|</span>
+                <span style="font-size:12px;color:var(--sf-gray-5)">31,500+ installs</span>
+              </div>
+              <div style="margin-top:6px;font-size:11px;color:var(--sf-gray-4);display:flex;align-items:center;gap:4px;cursor:help" title="Your org has no backup solution installed. Enterprise orgs in Financial Services are 4x more likely to adopt data protection tools.">&#9432; Why am I seeing this?</div>
+            </div>
+            <button class="btn btn-success btn-lg" style="flex-shrink:0">Get It Now</button>
+          </div>
+
+          <!-- Hero card 3: Copado (different advertiser) — shown because viewer has no DevOps tool -->
+          <div style="min-width:100%;scroll-snap-align:start;background:white;border:2px solid var(--sf-purple);border-radius:var(--sf-radius);padding:24px;display:flex;align-items:center;gap:20px;position:relative;box-shadow:var(--sf-shadow)">
+            <div style="position:absolute;top:10px;right:14px;display:flex;align-items:center;gap:8px">
+              <span style="background:#F3EAFF;color:var(--sf-purple);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px">Sponsored</span>
+            </div>
+            <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#7526C4,#4A148C);color:white;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;flex-shrink:0">C</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:16px;font-weight:700;color:var(--sf-navy)">Copado DevOps</div>
+              <div style="font-size:12px;color:var(--sf-gray-5);margin-bottom:4px">by Copado</div>
+              <div style="font-size:13px;color:var(--sf-text-secondary);margin-bottom:6px">End-to-end DevOps for Salesforce. CI/CD, testing, and release management built for enterprise teams.</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span style="font-weight:600;font-size:12px">4.8</span><span style="color:var(--sf-gray-5);font-size:12px">(934)</span>
+                <span style="color:var(--sf-gray-3)">|</span>
+                <span style="font-size:12px;color:var(--sf-gray-5)">22,100+ installs</span>
+              </div>
+              <div style="margin-top:6px;font-size:11px;color:var(--sf-gray-4);display:flex;align-items:center;gap:4px;cursor:help" title="Your org has Agentforce active and 15+ custom objects. Enterprise orgs at this complexity level see 3x deployment frequency improvement with DevOps tools.">&#9432; Why am I seeing this?</div>
+            </div>
+            <button class="btn btn-primary btn-lg" style="flex-shrink:0;background:var(--sf-purple)">Get It Now</button>
+          </div>
+
+          <!-- Hero card 4: ZoomInfo (different advertiser) — shown because viewer uses Sales Cloud -->
+          <div style="min-width:100%;scroll-snap-align:start;background:white;border:2px solid #DD7A01;border-radius:var(--sf-radius);padding:24px;display:flex;align-items:center;gap:20px;position:relative;box-shadow:var(--sf-shadow)">
+            <div style="position:absolute;top:10px;right:14px;display:flex;align-items:center;gap:8px">
+              <span style="background:var(--sf-orange-light);color:var(--sf-orange);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px">Sponsored</span>
+            </div>
+            <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#DD7A01,#A85D00);color:white;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;flex-shrink:0">Z</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:16px;font-weight:700;color:var(--sf-navy)">ZoomInfo for Salesforce</div>
+              <div style="font-size:12px;color:var(--sf-gray-5);margin-bottom:4px">by ZoomInfo</div>
+              <div style="font-size:13px;color:var(--sf-text-secondary);margin-bottom:6px">B2B intelligence platform. Enrich contacts, find buyers, and automate outreach directly in Sales Cloud.</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span><span style="font-weight:600;font-size:12px">4.3</span><span style="color:var(--sf-gray-5);font-size:12px">(567)</span>
+                <span style="color:var(--sf-gray-3)">|</span>
+                <span style="font-size:12px;color:var(--sf-gray-5)">14,600+ installs</span>
+              </div>
+              <div style="margin-top:6px;font-size:11px;color:var(--sf-gray-4);display:flex;align-items:center;gap:4px;cursor:help" title="Your org runs Sales Cloud Enterprise without a data enrichment tool. Similar orgs see 35% faster lead qualification with ZoomInfo.">&#9432; Why am I seeing this?</div>
+            </div>
+            <button class="btn btn-primary btn-lg" style="flex-shrink:0;background:var(--sf-orange)">Get It Now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Tiles -->
+      <div style="font-size:15px;font-weight:700;color:var(--sf-navy);margin-bottom:12px">Browse by Category</div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px">
+        <div style="background:white;border-radius:var(--sf-radius);padding:16px 12px;text-align:center;cursor:pointer;box-shadow:var(--sf-shadow);transition:all 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:28px;margin-bottom:6px">&#9729;</div>
+          <div style="font-size:12px;font-weight:600;color:var(--sf-navy)">Agents</div>
+          <div style="font-size:11px;color:var(--sf-gray-5)">2,100+</div>
+        </div>
+        <div style="background:white;border-radius:var(--sf-radius);padding:16px 12px;text-align:center;cursor:pointer;box-shadow:var(--sf-shadow);transition:all 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:28px;margin-bottom:6px">&#128200;</div>
+          <div style="font-size:12px;font-weight:600;color:var(--sf-navy)">Sales</div>
+          <div style="font-size:11px;color:var(--sf-gray-5)">3,400+</div>
+        </div>
+        <div style="background:white;border-radius:var(--sf-radius);padding:16px 12px;text-align:center;cursor:pointer;box-shadow:var(--sf-shadow);transition:all 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:28px;margin-bottom:6px">&#128172;</div>
+          <div style="font-size:12px;font-weight:600;color:var(--sf-navy)">Service</div>
+          <div style="font-size:11px;color:var(--sf-gray-5)">2,800+</div>
+        </div>
+        <div style="background:white;border-radius:var(--sf-radius);padding:16px 12px;text-align:center;cursor:pointer;box-shadow:var(--sf-shadow);transition:all 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:28px;margin-bottom:6px">&#128232;</div>
+          <div style="font-size:12px;font-weight:600;color:var(--sf-navy)">Marketing</div>
+          <div style="font-size:11px;color:var(--sf-gray-5)">1,900+</div>
+        </div>
+        <div style="background:white;border-radius:var(--sf-radius);padding:16px 12px;text-align:center;cursor:pointer;box-shadow:var(--sf-shadow);transition:all 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:28px;margin-bottom:6px">&#128202;</div>
+          <div style="font-size:12px;font-weight:600;color:var(--sf-navy)">Analytics</div>
+          <div style="font-size:11px;color:var(--sf-gray-5)">1,600+</div>
+        </div>
+        <div style="background:white;border-radius:var(--sf-radius);padding:16px 12px;text-align:center;cursor:pointer;box-shadow:var(--sf-shadow);transition:all 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          <div style="font-size:28px;margin-bottom:6px">&#128296;</div>
+          <div style="font-size:12px;font-weight:600;color:var(--sf-navy)">IT & Admin</div>
+          <div style="font-size:11px;color:var(--sf-gray-5)">1,200+</div>
+        </div>
+      </div>
+
+      <!-- "Recommended For You" section — multiple sponsored cards compete for position alongside organic -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--sf-navy)">Recommended for Your Org</div>
+          <div style="font-size:12px;color:var(--sf-gray-5)">Based on your setup: Sales Cloud Enterprise, Financial Services, 1,200 employees, Agentforce active</div>
+        </div>
+        <a href="#" style="font-size:13px;color:var(--sf-blue);font-weight:600;text-decoration:none" onclick="return false">View all &rarr;</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px">
+        <!-- Sponsored: Acme CPQ (position won via relevance score * bid) -->
+        <div class="listing-card sponsored" style="margin:0">
+          <div class="sponsored-badge">Sponsored</div>
+          <div class="listing-icon" style="background:linear-gradient(135deg,#0176D3,#032D60);color:white;font-weight:700">A</div>
+          <div class="listing-name">Acme CPQ Solutions</div>
+          <div class="listing-provider">by Acme Inc.</div>
+          <div class="listing-desc">AI-powered CPQ for Salesforce. Intelligent pricing rules and Agentforce integration.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span style="font-weight:600">4.8</span>
+            <span style="color:var(--sf-gray-5)">(342)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">12,400+ installs</div>
+          <div style="font-size:10px;color:var(--sf-gray-4);margin-top:6px;cursor:help" title="Shown because your org uses Sales Cloud and has no CPQ tool installed. Acme CPQ targets Financial Services enterprises on Sales Cloud.">&#9432; Why this ad?</div>
+          <button class="listing-cta">Get It Now</button>
+        </div>
+        <!-- Organic -->
+        <div class="listing-card" style="margin:0">
+          <div class="listing-icon" style="background:#E6F7EE;color:var(--sf-green);font-weight:700">G</div>
+          <div class="listing-name">Groove Sales Engagement</div>
+          <div class="listing-provider">by Groove (Clari)</div>
+          <div class="listing-desc">Revenue intelligence and sales engagement, native to Salesforce.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span style="font-weight:600">4.7</span>
+            <span style="color:var(--sf-gray-5)">(1,204)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">18,900+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <!-- Sponsored: Docusign (different advertiser, also targeting this viewer's org profile) -->
+        <div class="listing-card sponsored" style="margin:0">
+          <div class="sponsored-badge">Sponsored</div>
+          <div class="listing-icon" style="background:#FEF1E1;color:var(--sf-orange);font-weight:700">D</div>
+          <div class="listing-name">Docusign eSignature</div>
+          <div class="listing-provider">by Docusign</div>
+          <div class="listing-desc">Send, sign, and manage agreements directly from Salesforce records.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.4</span>
+            <span style="color:var(--sf-gray-5)">(2,891)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">52,300+ installs</div>
+          <div style="font-size:10px;color:var(--sf-gray-4);margin-top:6px;cursor:help" title="Shown because your org uses Sales Cloud without an e-signature tool. Docusign targets Enterprise orgs with quote-to-cash workflows.">&#9432; Why this ad?</div>
+          <button class="listing-cta">Get It Now</button>
+        </div>
+        <!-- Organic -->
+        <div class="listing-card" style="margin:0">
+          <div class="listing-icon" style="background:#F0E6FF;color:var(--sf-purple);font-weight:700">Z</div>
+          <div class="listing-name">ZoomInfo for Sales</div>
+          <div class="listing-provider">by ZoomInfo</div>
+          <div class="listing-desc">B2B intelligence platform with contact and company data for Sales Cloud.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.3</span>
+            <span style="color:var(--sf-gray-5)">(567)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">14,600+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+      </div>
+
+      <!-- Trending This Week — organic section, no sponsored -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:15px;font-weight:700;color:var(--sf-navy)">Trending This Week</div>
+        <a href="#" style="font-size:13px;color:var(--sf-blue);font-weight:600;text-decoration:none" onclick="return false">View all &rarr;</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px">
+        <div class="listing-card" style="margin:0">
+          <div class="listing-icon" style="background:#E6F7EE;color:var(--sf-green);font-weight:700">O</div>
+          <div class="listing-name">OwnBackup</div>
+          <div class="listing-provider">by Own Company</div>
+          <div class="listing-desc">Comprehensive data protection, backup, and recovery for Salesforce.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span style="font-weight:600">4.9</span>
+            <span style="color:var(--sf-gray-5)">(1,842)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">31,500+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <div class="listing-card" style="margin:0">
+          <div class="listing-icon" style="background:var(--sf-blue-light);color:var(--sf-blue);font-weight:700">C</div>
+          <div class="listing-name">Copado DevOps</div>
+          <div class="listing-provider">by Copado</div>
+          <div class="listing-desc">End-to-end DevOps for Salesforce. CI/CD, testing, and release management.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span style="font-weight:600">4.8</span>
+            <span style="color:var(--sf-gray-5)">(934)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">22,100+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <div class="listing-card" style="margin:0">
+          <div class="listing-icon" style="background:#FEF1EE;color:var(--sf-red);font-weight:700">F</div>
+          <div class="listing-name">FormAssembly</div>
+          <div class="listing-provider">by FormAssembly</div>
+          <div class="listing-desc">Enterprise form builder with native Salesforce data collection and compliance.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.5</span>
+            <span style="color:var(--sf-gray-5)">(412)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">16,800+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <div class="listing-card" style="margin:0">
+          <div class="listing-icon" style="background:#FEF1E1;color:var(--sf-orange);font-weight:700">L</div>
+          <div class="listing-name">LeanData</div>
+          <div class="listing-provider">by LeanData</div>
+          <div class="listing-desc">Revenue orchestration. Lead routing, matching, and buying group management.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.6</span>
+            <span style="color:var(--sf-gray-5)">(378)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">9,400+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+      </div>
+
+      <!-- Mid-page Sponsored Banner Ad (different advertiser: Gong) -->
+      <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:var(--sf-radius);padding:20px 24px;margin-bottom:28px;display:flex;align-items:center;gap:20px;position:relative;box-shadow:var(--sf-shadow)">
+        <div style="position:absolute;top:10px;right:14px;display:flex;align-items:center;gap:8px">
+          <span style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px">Sponsored</span>
+        </div>
+        <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#6C4FE7,#A855F7);color:white;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;flex-shrink:0">G</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:15px;font-weight:700;color:white">Gong Revenue Intelligence</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:4px">by Gong.io</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.8)">Capture every customer interaction, deliver insights that help your team close more deals. Native Sales Cloud integration.</div>
+          <div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,0.4);cursor:help" title="Shown because your org runs Sales Cloud Enterprise. Gong targets mid-market and enterprise Sales Cloud orgs without conversation intelligence tools.">&#9432; Why am I seeing this?</div>
+        </div>
+        <button class="btn btn-lg" style="flex-shrink:0;background:#A855F7;color:white;border:none">Learn More</button>
+      </div>
+
+      <!-- Popular in Financial Services — org-personalized section with a sponsored slot -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--sf-navy)">Popular in Financial Services</div>
+          <div style="font-size:12px;color:var(--sf-gray-5)">Top apps used by orgs in your industry</div>
+        </div>
+        <a href="#" style="font-size:13px;color:var(--sf-blue);font-weight:600;text-decoration:none" onclick="return false">View all &rarr;</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">
+        <!-- Organic -->
+        <div class="listing-card" style="margin:0">
+          <div class="listing-icon" style="background:#E6F7EE;color:var(--sf-green);font-weight:700">N</div>
+          <div class="listing-name">nCino Bank OS</div>
+          <div class="listing-provider">by nCino</div>
+          <div class="listing-desc">Cloud banking operating system. Loan origination, account opening, and deposit management.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span style="font-weight:600">4.7</span>
+            <span style="color:var(--sf-gray-5)">(623)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">8,900+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <!-- Sponsored: Acme CPQ appears again in a contextual section -->
+        <div class="listing-card sponsored" style="margin:0">
+          <div class="sponsored-badge">Sponsored</div>
+          <div class="listing-icon" style="background:linear-gradient(135deg,#0176D3,#032D60);color:white;font-weight:700">A</div>
+          <div class="listing-name">Acme CPQ Solutions</div>
+          <div class="listing-provider">by Acme Inc.</div>
+          <div class="listing-desc">AI-powered CPQ built for Financial Services deal complexity and compliance requirements.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span style="font-weight:600">4.8</span>
+            <span style="color:var(--sf-gray-5)">(342)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">12,400+ installs</div>
+          <div style="font-size:10px;color:var(--sf-gray-4);margin-top:6px;cursor:help" title="Shown because Acme CPQ specifically targets Financial Services enterprises. 24% of their installs are in your industry.">&#9432; Why this ad?</div>
+          <button class="listing-cta">Get It Now</button>
+        </div>
+        <!-- Organic -->
+        <div class="listing-card" style="margin:0">
+          <div class="listing-icon" style="background:#FEF1EE;color:var(--sf-red);font-weight:700">B</div>
+          <div class="listing-name">Blend Mortgage</div>
+          <div class="listing-provider">by Blend Labs</div>
+          <div class="listing-desc">Digital lending platform integrated with Salesforce for mortgage origination and consumer banking.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.3</span>
+            <span style="color:var(--sf-gray-5)">(187)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">4,200+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <!-- Sponsored: Compliance tool (different advertiser) -->
+        <div class="listing-card sponsored" style="margin:0">
+          <div class="sponsored-badge">Sponsored</div>
+          <div class="listing-icon" style="background:linear-gradient(135deg,#BA0517,#8B0000);color:white;font-weight:700">S</div>
+          <div class="listing-name">Smarsh Compliance</div>
+          <div class="listing-provider">by Smarsh</div>
+          <div class="listing-desc">Communications compliance archiving for financial services. FINRA, SEC, and MiFID II ready.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.2</span>
+            <span style="color:var(--sf-gray-5)">(94)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">2,800+ installs</div>
+          <div style="font-size:10px;color:var(--sf-gray-4);margin-top:6px;cursor:help" title="Shown because your org is in Financial Services. Smarsh targets FinServ orgs without a compliance archiving tool installed.">&#9432; Why this ad?</div>
+          <button class="listing-cta">Get It Now</button>
+        </div>
+      </div>
+
+      <!-- How Ad Targeting Works callout -->
+      <div style="background:var(--sf-white);border:1px solid var(--sf-gray-2);border-radius:var(--sf-radius);padding:16px 20px;margin-bottom:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:14px">&#9432;</span>
+          <span style="font-size:12px;font-weight:700;color:var(--sf-navy)">How ads are matched to your org</span>
+        </div>
+        <div style="font-size:12px;color:var(--sf-text-secondary);line-height:1.6">
+          Sponsored listings are shown based on your org's Salesforce configuration (products, edition, industry, size) and aggregate install patterns &mdash; not personal data. Each ad is served by an ISV partner who has defined an audience segment matching your org profile. Partners bid for placement; ads are ranked by <strong>relevance score &times; bid</strong>, so higher-quality matches rank higher even at lower bids. You can hover "Why this ad?" on any placement to see the specific match criteria. <a href="#" style="color:var(--sf-blue);font-weight:600" onclick="return false">Manage ad preferences</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 2: Search Results (existing) -->
+    <div id="mp-tab-search" class="marketplace-preview" style="display:none">
+
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:18px;font-weight:700;color:var(--sf-navy);margin-bottom:4px">AgentExchange</div>
+        <div style="font-size:12px;color:var(--sf-gray-5)">Agents, apps, and tools for Salesforce & Slack</div>
+      </div>
+
+      <div class="marketplace-search">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" placeholder="Search apps, agents, and tools..." value="CPQ solutions">
+      </div>
+
+      <div style="font-size:12px;color:var(--sf-gray-5);margin-bottom:12px">Showing results for "CPQ solutions" &mdash; 47 results</div>
+
+      <div class="listing-grid">
+        <div class="listing-card sponsored">
+          <div class="sponsored-badge">Sponsored</div>
+          <div class="listing-icon" style="background:linear-gradient(135deg,#0176D3,#032D60);color:white;font-weight:700">A</div>
+          <div class="listing-name">Acme CPQ Solutions</div>
+          <div class="listing-provider">by Acme Inc.</div>
+          <div class="listing-desc">AI-powered Configure, Price, Quote for Salesforce. Streamline complex quoting with intelligent pricing rules and Agentforce integration.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span style="font-weight:600">4.8</span>
+            <span style="color:var(--sf-gray-5)">(342 reviews)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">12,400+ installs</div>
+          <button class="listing-cta">Get It Now</button>
+        </div>
+        <div class="listing-card">
+          <div class="listing-icon" style="background:#F0E6FF;color:var(--sf-purple);font-weight:700">S</div>
+          <div class="listing-name">SteelBrick CPQ</div>
+          <div class="listing-provider">by Salesforce</div>
+          <div class="listing-desc">Native CPQ built on the Salesforce Platform. Configure complex products and generate accurate quotes.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.3</span>
+            <span style="color:var(--sf-gray-5)">(891 reviews)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">45,200+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <div class="listing-card">
+          <div class="listing-icon" style="background:#E6F7EE;color:var(--sf-green);font-weight:700">D</div>
+          <div class="listing-name">DealHub CPQ</div>
+          <div class="listing-provider">by DealHub.io</div>
+          <div class="listing-desc">Revenue workflow platform with CPQ, CLM, and DealRoom. Accelerate sales cycles with guided selling.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.5</span>
+            <span style="color:var(--sf-gray-5)">(218 reviews)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">8,100+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <div class="listing-card">
+          <div class="listing-icon" style="background:#FEF1E1;color:var(--sf-orange);font-weight:700">C</div>
+          <div class="listing-name">Conga CPQ</div>
+          <div class="listing-provider">by Conga</div>
+          <div class="listing-desc">End-to-end revenue lifecycle management. CPQ, CLM, and digital commerce on one platform.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.2</span>
+            <span style="color:var(--sf-gray-5)">(156 reviews)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">6,300+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <div class="listing-card">
+          <div class="listing-icon" style="background:#FEF1EE;color:var(--sf-red);font-weight:700">P</div>
+          <div class="listing-name">PandaDoc CPQ</div>
+          <div class="listing-provider">by PandaDoc</div>
+          <div class="listing-desc">Smart quoting meets document automation. Create proposals, quotes, and contracts in minutes.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.4</span>
+            <span style="color:var(--sf-gray-5)">(89 reviews)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">3,200+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+        <div class="listing-card">
+          <div class="listing-icon" style="background:var(--sf-blue-light);color:var(--sf-blue);font-weight:700">Q</div>
+          <div class="listing-name">QuoteWerks for SF</div>
+          <div class="listing-provider">by Aspire Technologies</div>
+          <div class="listing-desc">Quoting and proposal software integrated with Salesforce CRM. Fast, accurate quotes every time.</div>
+          <div class="listing-rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <span style="font-weight:600">4.1</span>
+            <span style="color:var(--sf-gray-5)">(67 reviews)</span>
+          </div>
+          <div class="listing-installs" style="margin-top:4px">2,100+ installs</div>
+          <button class="listing-cta" style="background:var(--sf-white);color:var(--sf-blue);border:1px solid var(--sf-blue)">Get It Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Placement legend (shown for both tabs) -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-title" style="margin-bottom:12px">Sponsored Placement Types</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px">
+        <div style="padding:14px;border:1px solid var(--sf-gray-2);border-radius:var(--sf-radius-sm)">
+          <div style="font-size:13px;font-weight:700;color:var(--sf-navy);margin-bottom:4px">Featured Banner</div>
+          <div style="font-size:12px;color:var(--sf-gray-5)">Full-width hero placement on homepage. Highest visibility for awareness. Shown to all browsing users.</div>
+          <div style="font-size:11px;color:var(--sf-blue);font-weight:600;margin-top:8px">Appears: Homepage only</div>
+        </div>
+        <div style="padding:14px;border:1px solid var(--sf-gray-2);border-radius:var(--sf-radius-sm)">
+          <div style="font-size:13px;font-weight:700;color:var(--sf-navy);margin-bottom:4px">Recommended Card</div>
+          <div style="font-size:12px;color:var(--sf-gray-5)">Sponsored card in "Recommended for Your Org" and category grids. Blends with organic results.</div>
+          <div style="font-size:11px;color:var(--sf-blue);font-weight:600;margin-top:8px">Appears: Homepage, category pages</div>
+        </div>
+        <div style="padding:14px;border:1px solid var(--sf-gray-2);border-radius:var(--sf-radius-sm)">
+          <div style="font-size:13px;font-weight:700;color:var(--sf-navy);margin-bottom:4px">Search Result</div>
+          <div style="font-size:12px;color:var(--sf-gray-5)">Top position in search results with "Sponsored" label. Captures high-intent users actively searching.</div>
+          <div style="font-size:11px;color:var(--sf-blue);font-weight:600;margin-top:8px">Appears: Search results</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">Placement Performance (In-Marketplace)</div>
+      <div class="grid-3">
+        <div style="text-align:center;padding:16px;background:var(--sf-gray-1);border-radius:var(--sf-radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--sf-navy)">73,630</div>
+          <div style="font-size:12px;color:var(--sf-gray-5)">Sponsored Impressions</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:var(--sf-gray-1);border-radius:var(--sf-radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--sf-navy)">873</div>
+          <div style="font-size:12px;color:var(--sf-gray-5)">Clicks (1.19% CTR)</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:var(--sf-green-light);border-radius:var(--sf-radius-sm)">
+          <div style="font-size:20px;font-weight:700;color:var(--sf-green)">62</div>
+          <div style="font-size:12px;color:var(--sf-green)">Installs from marketplace</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
+    const map = {dashboard:0, campaigns:1, create:2, audiences:3, performance:4, marketplace:5};
+    const items = document.querySelectorAll('.sidebar .nav-item');
+    if (items[map[name]]) items[map[name]].classList.add('active');
+  }
+
+  function goToStep(num) {
+    document.querySelectorAll('.step-content').forEach(s => s.style.display = 'none');
+    document.getElementById('step-' + num).style.display = 'block';
+
+    for (let i = 1; i <= 4; i++) {
+      const ind = document.getElementById('step-' + i + '-indicator');
+      ind.className = 'step';
+      if (i < num) ind.className = 'step completed';
+      if (i === num) ind.className = 'step active';
+
+      const numEl = ind.querySelector('.step-number');
+      if (i < num) numEl.innerHTML = '&#10003;';
+      else numEl.textContent = i;
+    }
+
+    document.querySelectorAll('.step-line').forEach((line, idx) => {
+      line.className = 'step-line' + (idx < num - 1 ? ' completed' : '');
+    });
+  }
+
+  goToStep(2);
+
+  function scrollHeroTo(index) {
+    var carousel = document.getElementById('hero-carousel');
+    var cardWidth = carousel.scrollWidth / 4;
+    carousel.scrollTo({ left: cardWidth * index, behavior: 'smooth' });
+  }
+  function updateHeroDots() {
+    var carousel = document.getElementById('hero-carousel');
+    var cardWidth = carousel.scrollWidth / 4;
+    var active = Math.round(carousel.scrollLeft / cardWidth);
+    for (var i = 0; i < 4; i++) {
+      document.getElementById('hero-dot-' + i).style.background = i === active ? 'var(--sf-blue)' : 'var(--sf-gray-3)';
+    }
+  }
+
+  function showMarketplaceTab(tab) {
+    document.getElementById('mp-tab-browse').style.display = tab === 'browse' ? 'block' : 'none';
+    document.getElementById('mp-tab-search').style.display = tab === 'search' ? 'block' : 'none';
+    var tabs = document.querySelectorAll('#marketplace-tabs .tab');
+    tabs[0].className = 'tab' + (tab === 'browse' ? ' active' : '');
+    tabs[1].className = 'tab' + (tab === 'search' ? ' active' : '');
+  }
+</script>
+
+</body>
+</html>
